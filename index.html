@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Buenos Aires Barbershop — El último ritual</title>
+<meta name="description" content="Barbería clásica de Buenos Aires. Cortes, barba y afeitado en una atmósfera de tradición y artesanía. Reserva tu turno." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Loader -->
+<div class="loader" id="loader">
+  <div class="loader-inner">
+    <span class="loader-line"></span>
+    <span class="loader-text">Buenos Aires Barbershop</span>
+  </div>
+</div>
+
+<!-- Navigation -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo">
+      <img src="https://buenosairesbarbershop.com/assets/img/logo/logo_chico.png" alt="Buenos Aires Barbershop" />
+    </a>
+    <nav class="nav-links">
+      <a href="#barberia">La Barbería</a>
+      <a href="#equipo">Equipo</a>
+      <a href="#colecciones">Colecciones</a>
+      <a href="#prensa">Prensa</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <a href="#contacto" class="nav-cta">Reservar</a>
+    <button class="nav-burger" id="navBurger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <nav>
+    <a href="#barberia">La Barbería</a>
+    <a href="#equipo">Equipo</a>
+    <a href="#colecciones">Colecciones</a>
+    <a href="#prensa">Prensa</a>
+    <a href="#contacto">Contacto</a>
+    <a href="#contacto" class="mobile-cta">Reservar turno</a>
+  </nav>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg">
+    <img src="https://buenosairesbarbershop.com/assets/img/barberia-interior.jpg" alt="" />
+    <div class="hero-overlay"></div>
+  </div>
+  <canvas id="heroCanvas" class="hero-canvas"></canvas>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow"><span class="line"></span> EST. BUENOS AIRES</p>
+    <h1 class="hero-title">
+      <span class="word">El</span>
+      <span class="word">último</span>
+      <span class="word italic">ritual</span>
+      <span class="word">masculino.</span>
+    </h1>
+    <p class="hero-sub">Cortes, barba y afeitado clásico en el corazón de Buenos Aires. Tradición, oficio y carácter desde hace más de una década.</p>
+    <div class="hero-actions">
+      <a href="#contacto" class="btn btn-primary">Reservar un turno</a>
+      <a href="#barberia" class="btn btn-ghost">Conocer la casa</a>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span></span>
+    <p>Scroll</p>
+  </div>
+
+  <div class="hero-marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>Corte clásico</span><span>•</span>
+      <span>Barba</span><span>•</span>
+      <span>Afeitado a navaja</span><span>•</span>
+      <span>Ritual masculino</span><span>•</span>
+      <span>Desde 2012</span><span>•</span>
+      <span>Corte clásico</span><span>•</span>
+      <span>Barba</span><span>•</span>
+      <span>Afeitado a navaja</span><span>•</span>
+      <span>Ritual masculino</span><span>•</span>
+      <span>Desde 2012</span><span>•</span>
+    </div>
+  </div>
+</section>
+
+<!-- LA BARBERÍA -->
+<section class="section barberia" id="barberia">
+  <div class="container grid-2">
+    <div class="reveal-image">
+      <img class="parallax-img" data-speed="0.15" src="https://buenosairesbarbershop.com/assets/img/historia_diego.jpg" alt="Diego, fundador" />
+      <div class="image-mask"></div>
+    </div>
+
+    <div class="barberia-text">
+      <p class="eyebrow reveal">— La Casa</p>
+      <h2 class="reveal-text">Una barbería <em>hecha a mano</em>, no a máquina.</h2>
+      <p class="lead reveal">Fundada por <strong>Diego</strong>, Buenos Aires Barbershop es el refugio de quienes entienden que un buen corte se construye despacio. Tijeras, navaja, espuma caliente y conversación. Sin atajos.</p>
+
+      <div class="services">
+        <div class="service-item reveal">
+          <img src="https://buenosairesbarbershop.com/assets/img/icons/scissors-white.png" alt="" />
+          <h3>Corte clásico</h3>
+          <p>Diseñado a tu rostro, ejecutado a tijera y máquina.</p>
+        </div>
+        <div class="service-item reveal">
+          <img src="https://buenosairesbarbershop.com/assets/img/icons/razor-white.png" alt="" />
+          <h3>Afeitado a navaja</h3>
+          <p>Toallas calientes, aceites y el ritual completo.</p>
+        </div>
+        <div class="service-item reveal">
+          <img src="https://buenosairesbarbershop.com/assets/img/icons/brush-white.png" alt="" />
+          <h3>Diseño de barba</h3>
+          <p>Perfilado, hidratación y cuidado profesional.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS / TRUST STRIP -->
+<section class="stats">
+  <div class="container stats-grid">
+    <div class="stat reveal"><span class="num" data-target="12">0</span><p>años de oficio</p></div>
+    <div class="stat reveal"><span class="num" data-target="7">0</span><p>barberos en la casa</p></div>
+    <div class="stat reveal"><span class="num" data-target="40000">0</span><p>cortes realizados</p></div>
+    <div class="stat reveal"><span class="num" data-target="5" data-decimal=".0">0</span><p>estrellas en Google</p></div>
+  </div>
+</section>
+
+<!-- EQUIPO -->
+<section class="section equipo" id="equipo">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow reveal">— El Equipo</p>
+      <h2 class="reveal-text">Las manos detrás del oficio.</h2>
+      <p class="lead reveal">Siete barberos, una sola escuela. Cada uno con su firma, todos con la misma exigencia.</p>
+    </header>
+
+    <div class="team-grid">
+      <article class="barber reveal-up">
+        <div class="barber-img"><img src="https://buenosairesbarbershop.com/assets/img/barberos/diego3581.jpg" alt="Diego" /></div>
+        <h3>Diego</h3><p>Fundador</p>
+      </article>
+      <article class="barber reveal-up">
+        <div class="barber-img"><img src="https://buenosairesbarbershop.com/assets/img/barberos/nahuel4008.jpg" alt="Nahuel" /></div>
+        <h3>Nahuel</h3><p>Barbero senior</p>
+      </article>
+      <article class="barber reveal-up">
+        <div class="barber-img"><img src="https://buenosairesbarbershop.com/assets/img/barberos/ivan1720.jpg" alt="Iván" /></div>
+        <h3>Iván</h3><p>Barbero</p>
+      </article>
+      <article class="barber reveal-up">
+        <div class="barber-img"><img src="https://buenosairesbarbershop.com/assets/img/barberos/felix5786.jpg" alt="Felix" /></div>
+        <h3>Felix</h3><p>Barbero</p>
+      </article>
+      <article class="barber reveal-up">
+        <div class="barber-img"><img src="https://buenosairesbarbershop.com/assets/img/barberos/maxi5536.jpg" alt="Maxi" /></div>
+        <h3>Maxi</h3><p>Barbero</p>
+      </article>
+      <article class="barber reveal-up">
+        <div class="barber-img"><img src="https://buenosairesbarbershop.com/assets/img/barberos/isaias_3816.jpeg" alt="Isaías" /></div>
+        <h3>Isaías</h3><p>Barbero</p>
+      </article>
+      <article class="barber reveal-up">
+        <div class="barber-img"><img src="https://buenosairesbarbershop.com/assets/img/barberos/diego5365.jpeg" alt="Diego" /></div>
+        <h3>Diego</h3><p>Barbero</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- COLECCIONES -->
+<section class="section colecciones" id="colecciones">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow reveal">— Colecciones</p>
+      <h2 class="reveal-text">Cuatro estaciones, un mismo estándar.</h2>
+      <p class="lead reveal">Nuestro trabajo, capturado a lo largo del año.</p>
+    </header>
+  </div>
+
+  <div class="collections-grid">
+    <a class="collection reveal-up" href="#">
+      <div class="collection-img"><img src="https://drive.google.com/thumbnail?id=1qkVz7KZ-PQHZA4CHebk2ntQ9_WCapRKV&sz=w1200" alt="" /></div>
+      <div class="collection-meta"><span>01</span><h3>Summer</h3></div>
+    </a>
+    <a class="collection reveal-up" href="#">
+      <div class="collection-img"><img src="https://drive.google.com/thumbnail?id=1_k8Tcui5fGNIYJ94wvYMrEBnZw3gJOES&sz=w1200" alt="" /></div>
+      <div class="collection-meta"><span>02</span><h3>Spring</h3></div>
+    </a>
+    <a class="collection reveal-up" href="#">
+      <div class="collection-img"><img src="https://drive.google.com/thumbnail?id=1NHrH15JS4oGsEmRCc3Mq3cVMT7mv6d1x&sz=w1200" alt="" /></div>
+      <div class="collection-meta"><span>03</span><h3>Winter</h3></div>
+    </a>
+    <a class="collection reveal-up" href="#">
+      <div class="collection-img"><img src="https://drive.google.com/thumbnail?id=1ujtSAjRSoSgNBBdXr6C49JNRmdiW12ZG&sz=w1200" alt="" /></div>
+      <div class="collection-meta"><span>04</span><h3>Autumn</h3></div>
+    </a>
+    <a class="collection collection-wide reveal-up" href="#">
+      <div class="collection-img"><img src="https://drive.google.com/thumbnail?id=1yEAFfltDRqoHJwr3a73xiU1KxTLUF7u-&sz=w1600" alt="" /></div>
+      <div class="collection-meta"><span>05</span><h3>Clientes</h3></div>
+    </a>
+  </div>
+</section>
+
+<!-- QUOTE / PULL QUOTE -->
+<section class="pullquote">
+  <canvas id="quoteCanvas" class="quote-canvas"></canvas>
+  <div class="container">
+    <p class="quote reveal-text">
+      <span class="q">"</span>
+      Un buen corte no se nota.<br/>
+      <em>Se siente.</em>
+      <span class="q">"</span>
+    </p>
+    <p class="quote-attr reveal">— Diego, fundador</p>
+  </div>
+</section>
+
+<!-- PRENSA -->
+<section class="section prensa" id="prensa">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow reveal">— Prensa</p>
+      <h2 class="reveal-text">Hablan de nosotros.</h2>
+    </header>
+  </div>
+
+  <div class="prensa-carousel" id="prensaCarousel">
+    <div class="prensa-track">
+      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1_GdR-6pNNAMWxeVCXYaJLlzcy3e735pW&sz=w800" alt="La Nación"/></div>
+      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1XLr-DIzl9q1YvPhTYcyM28mo6m_cKuz5&sz=w800" alt="La Nación"/></div>
+      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=10zSIC9nNlKr4XFStddlrkG5LgUKxujaS&sz=w800" alt="El Intransigente"/></div>
+      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1KR2HAn5hptmgdx69VMV1jLj-CbWO9HVX&sz=w800" alt="Clarín"/></div>
+      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1dTqjbG5V6KPYOlVgdIAssJYxrm8WOvzx&sz=w800" alt="Artero Entrevista"/></div>
+      <!-- duplicado para loop infinito -->
+      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1_GdR-6pNNAMWxeVCXYaJLlzcy3e735pW&sz=w800" alt=""/></div>
+      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1XLr-DIzl9q1YvPhTYcyM28mo6m_cKuz5&sz=w800" alt=""/></div>
+      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=10zSIC9nNlKr4XFStddlrkG5LgUKxujaS&sz=w800" alt=""/></div>
+      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1KR2HAn5hptmgdx69VMV1jLj-CbWO9HVX&sz=w800" alt=""/></div>
+      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1dTqjbG5V6KPYOlVgdIAssJYxrm8WOvzx&sz=w800" alt=""/></div>
+    </div>
+  </div>
+</section>
+
+<!-- RESEÑAS -->
+<section class="section reviews" id="reviews">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow reveal">— Reseñas</p>
+      <h2 class="reveal-text">Lo que dicen quienes ya pasaron por la silla.</h2>
+    </header>
+
+    <div class="reviews-grid">
+      <article class="review reveal-up">
+        <div class="review-head">
+          <img src="https://lh3.googleusercontent.com/a-/ALV-UjU9d5oQVRcCjZgtNEveiPDwMElRioBBGTODIhQNUGwpbQBhoY8" alt=""/>
+          <div><h4>Martín G.</h4><div class="stars">★★★★★</div></div>
+          <img class="google-logo" src="https://buenosairesbarbershop.com/assets/img/google-logo.svg" alt="Google"/>
+        </div>
+        <p>"Atención impecable, ambiente clásico, y un corte que dura semanas. La mejor barbería de la ciudad."</p>
+      </article>
+
+      <article class="review reveal-up">
+        <div class="review-head">
+          <img src="https://lh3.googleusercontent.com/a-/ALV-UjV17olIv7ByrQdh3wNhooRnD2R-Az3tJwqT_JElS2_a44t_Dbk8ZQ" alt=""/>
+          <div><h4>Lucas F.</h4><div class="stars">★★★★★</div></div>
+          <img class="google-logo" src="https://buenosairesbarbershop.com/assets/img/google-logo.svg" alt="Google"/>
+        </div>
+        <p>"El afeitado a navaja es una experiencia. Salís otra persona. Diego y su equipo son de otro nivel."</p>
+      </article>
+
+      <article class="review reveal-up">
+        <div class="review-head">
+          <img src="https://lh3.googleusercontent.com/a/ACg8ocLDEoG1FAStmHcMHrQDXhzGUaJn-FyQaq-tw6Mbth_TEGzz6TE" alt=""/>
+          <div><h4>Federico R.</h4><div class="stars">★★★★★</div></div>
+          <img class="google-logo" src="https://buenosairesbarbershop.com/assets/img/google-logo.svg" alt="Google"/>
+        </div>
+        <p>"Llevo años yendo. Profesionalismo, oficio y un trato siempre cálido. Recomendado al 200%."</p>
+      </article>
+
+      <article class="review reveal-up">
+        <div class="review-head">
+          <img src="https://lh3.googleusercontent.com/a/ACg8ocKsdE8xM7qFAp7jKFc6abKtSt9JtQMOYRYtCMWsMikvy6wYIw" alt=""/>
+          <div><h4>Tomás L.</h4><div class="stars">★★★★★</div></div>
+          <img class="google-logo" src="https://buenosairesbarbershop.com/assets/img/google-logo.svg" alt="Google"/>
+        </div>
+        <p>"La atención al detalle es notable. Cada visita es un ritual. No hay vuelta atrás."</p>
+      </article>
+
+      <article class="review reveal-up">
+        <div class="review-head">
+          <img src="https://lh3.googleusercontent.com/a/ACg8ocIY-5x0RXBXKB3J8iNJlEn9Qpkypy9Hnp1uD1ty8gofskn-pg" alt=""/>
+          <div><h4>Joaquín M.</h4><div class="stars">★★★★★</div></div>
+          <img class="google-logo" src="https://buenosairesbarbershop.com/assets/img/google-logo.svg" alt="Google"/>
+        </div>
+        <p>"Sin duda la mejor barbería de Buenos Aires. La estética del lugar es tan cuidada como el corte."</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- AMIGOS DE LA CASA -->
+<section class="friends">
+  <div class="container">
+    <p class="eyebrow center reveal">— Amigos de la casa</p>
+    <div class="friends-grid">
+      <img class="reveal" src="https://buenosairesbarbershop.com/assets/img/logo/G_cunnington.png" alt="Cunnington"/>
+      <img class="reveal" src="https://buenosairesbarbershop.com/assets/img/logo/G_artero.png" alt="Artero"/>
+      <img class="reveal" src="https://buenosairesbarbershop.com/assets/img/logo/G_sagafredo.png" alt="Sagafredo"/>
+      <img class="reveal" src="https://buenosairesbarbershop.com/assets/img/logo/G_american.png" alt="American"/>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO / RESERVA -->
+<section class="section contacto" id="contacto">
+  <div class="container grid-2 contacto-grid">
+    <div class="contacto-info">
+      <p class="eyebrow reveal">— Reservá tu turno</p>
+      <h2 class="reveal-text">Pasá por la casa.</h2>
+      <p class="lead reveal">El primer corte siempre es la mejor presentación. Te esperamos en Buenos Aires.</p>
+
+      <ul class="contacto-list reveal">
+        <li><span>Dirección</span><p>Buenos Aires, Argentina</p></li>
+        <li><span>Horarios</span><p>Lun a Sáb · 10:00 — 20:00</p></li>
+        <li><span>Reservas</span><p><a href="https://wa.me/" target="_blank" rel="noopener">WhatsApp</a> · <a href="mailto:info@buenosairesbarbershop.com">info@buenosairesbarbershop.com</a></p></li>
+        <li><span>Instagram</span><p><a href="https://instagram.com/buenosairesbarbershop" target="_blank" rel="noopener">@buenosairesbarbershop</a></p></li>
+      </ul>
+
+      <a href="https://wa.me/" class="btn btn-primary reveal">Reservar por WhatsApp</a>
+    </div>
+
+    <div class="contacto-map reveal-image">
+      <img src="https://buenosairesbarbershop.com/assets/img/mapa.jpg" alt="Mapa Buenos Aires Barbershop"/>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <img src="https://buenosairesbarbershop.com/assets/img/logo/logo_grande_3_blano.png" alt="Buenos Aires Barbershop"/>
+      <p>El último ritual masculino.</p>
+    </div>
+
+    <div class="footer-meta">
+      <p>© <span id="year"></span> Buenos Aires Barbershop. Todos los derechos reservados.</p>
+      <p class="small">Diseñado con oficio en Buenos Aires.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- three.js + GSAP via CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
