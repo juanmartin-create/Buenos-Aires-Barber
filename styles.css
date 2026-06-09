@@ -33,10 +33,11 @@ body {
   font-size: 16px;
   line-height: 1.6;
   font-weight: 300;
-  overflow-x: hidden;
+  overflow-x: clip; /* clip en vez de hidden: NO rompe position:sticky */
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+html { overflow-x: clip; }
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; background: none; border: none; color: inherit; cursor: pointer; }
@@ -371,6 +372,86 @@ em { font-style: italic; color: var(--gold); }
   font-size: 11px; letter-spacing: 0.3em; color: var(--gold); margin-bottom: 8px;
 }
 .collection-meta h3 { font-size: clamp(22px, 2.4vw, 34px); }
+
+/* ---------- El Ritual (Scrollytelling) ---------- */
+.ritual {
+  position: relative;
+  height: 500vh; /* 5 viewport heights = 5 chapters */
+  background: #050505;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.ritual-pin {
+  position: sticky; top: 0;
+  height: 100vh; height: 100dvh;
+  overflow: hidden;
+}
+.ritual-canvas {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%;
+}
+.ritual-overlay {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; align-items: center;
+  pointer-events: none;
+}
+.ritual-grid {
+  width: 100%;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(40px, 6vw, 100px); align-items: center;
+}
+.ritual-side { position: relative; }
+
+.ritual-eyebrow-col .eyebrow { margin-bottom: 40px; }
+.ritual-progress {
+  width: 100%; max-width: 280px; height: 1px;
+  background: var(--line); position: relative; overflow: hidden;
+}
+.ritual-progress-bar {
+  position: absolute; top: 0; left: 0; height: 100%;
+  width: 0%;
+  background: var(--gold);
+  transition: width 0.2s linear;
+}
+.ritual-count {
+  margin-top: 18px;
+  font-family: var(--serif);
+  font-size: 14px; letter-spacing: 0.3em; color: var(--ink-dim);
+}
+.ritual-count #ritualNum { color: var(--gold); font-size: 18px; }
+
+.ritual-chapters { position: relative; min-height: 280px; }
+.ritual-chapters .chapter {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: center;
+  opacity: 0; transform: translateY(40px);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+  pointer-events: none;
+}
+.ritual-chapters .chapter.active {
+  opacity: 1; transform: translateY(0);
+}
+.ritual-chapters .chapter-num {
+  font-family: var(--serif);
+  font-size: 14px; color: var(--gold);
+  letter-spacing: 0.4em; margin-bottom: 16px;
+}
+.ritual-chapters h3 {
+  font-size: clamp(40px, 5vw, 72px); line-height: 1.05;
+  margin-bottom: 24px; color: var(--ink);
+}
+.ritual-chapters p {
+  color: var(--ink-dim); font-size: clamp(15px, 1.3vw, 18px);
+  max-width: 48ch;
+}
+
+@media (max-width: 900px) {
+  .ritual { height: 600vh; }
+  .ritual-grid { grid-template-columns: 1fr; gap: 24px; align-items: end; }
+  .ritual-eyebrow-col { order: 2; padding-bottom: 60px; }
+  .ritual-chapters { min-height: 220px; }
+  .ritual-overlay { align-items: flex-end; padding-bottom: 12vh; }
+}
 
 /* ---------- Pullquote ---------- */
 .pullquote {

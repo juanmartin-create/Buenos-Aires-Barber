@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----- three.js scenes -----
   initHeroScene();
   initQuoteScene();
+  initRitualScene();
 });
 
 /* ---------- Hero intro animation ---------- */
@@ -338,6 +339,249 @@ function initQuoteScene() {
     requestAnimationFrame(tick);
   }
   tick();
+}
+
+/* =========================================================
+   THREE.JS — El Ritual: scroll-pinned cinematic scene
+   ========================================================= */
+function initRitualScene() {
+  const canvas = document.getElementById('ritualCanvas');
+  if (!canvas || !window.THREE) return;
+
+  // Robust size getter — falls back to window if canvas has no layout yet
+  const getSize = () => {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      w: rect.width  || canvas.clientWidth  || window.innerWidth,
+      h: rect.height || canvas.clientHeight || window.innerHeight
+    };
+  };
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x050505, 0.03);
+
+  const initial = getSize();
+  const camera = new THREE.PerspectiveCamera(45, initial.w / initial.h, 0.1, 1000);
+  camera.position.set(0, 0, 18);
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x050505, 0); // transparent so section bg shows through
+  renderer.setSize(initial.w, initial.h, false);
+
+  // -- Lighting (subtle gold rim)
+  const ambient = new THREE.AmbientLight(0x1a1816, 0.4);
+  scene.add(ambient);
+  const keyLight = new THREE.DirectionalLight(0xc9a96a, 1.4);
+  keyLight.position.set(6, 8, 6);
+  scene.add(keyLight);
+  const rimLight = new THREE.DirectionalLight(0xfff5e0, 0.6);
+  rimLight.position.set(-6, -4, -3);
+  scene.add(rimLight);
+
+  // -- Barber Pole (custom canvas texture with diagonal stripes)
+  const stripeTexture = makeBarberPoleTexture();
+  stripeTexture.wrapS = THREE.RepeatWrapping;
+  stripeTexture.wrapT = THREE.RepeatWrapping;
+
+  const poleGroup = new THREE.Group();
+
+  // glass cylinder with stripes
+  const poleGeom = new THREE.CylinderGeometry(1.2, 1.2, 8, 64, 1, true);
+  const poleMat = new THREE.MeshStandardMaterial({
+    map: stripeTexture,
+    metalness: 0.4,
+    roughness: 0.3,
+    side: THREE.DoubleSide
+  });
+  const pole = new THREE.Mesh(poleGeom, poleMat);
+  poleGroup.add(pole);
+
+  // top and bottom caps (gold)
+  const capGeom = new THREE.CylinderGeometry(1.35, 1.35, 0.6, 64);
+  const capMat = new THREE.MeshStandardMaterial({ color: 0xc9a96a, metalness: 0.9, roughness: 0.25 });
+  const capTop = new THREE.Mesh(capGeom, capMat);
+  capTop.position.y = 4.3;
+  poleGroup.add(capTop);
+  const capBot = new THREE.Mesh(capGeom, capMat);
+  capBot.position.y = -4.3;
+  poleGroup.add(capBot);
+
+  // small spheres on ends
+  const ballGeom = new THREE.SphereGeometry(0.5, 32, 32);
+  const ballTop = new THREE.Mesh(ballGeom, capMat);
+  ballTop.position.y = 4.85;
+  poleGroup.add(ballTop);
+  const ballBot = new THREE.Mesh(ballGeom, capMat);
+  ballBot.position.y = -4.85;
+  poleGroup.add(ballBot);
+
+  scene.add(poleGroup);
+
+  // -- Floating decorative rings around the pole
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0xc9a96a, transparent: true, opacity: 0.18, wireframe: true });
+  const ringSet = new THREE.Group();
+  for (let i = 0; i < 3; i++) {
+    const r = 4 + i * 1.5;
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.02, 8, 120), ringMat.clone());
+    ring.material.opacity = 0.25 - i * 0.07;
+    ring.rotation.x = Math.PI / 2 + (i - 1) * 0.2;
+    ring.userData.speed = 0.08 + i * 0.04;
+    ringSet.add(ring);
+  }
+  scene.add(ringSet);
+
+  // -- Particle field
+  const partCount = 900;
+  const partPos = new Float32Array(partCount * 3);
+  for (let i = 0; i < partCount; i++) {
+    const r = 8 + Math.random() * 20;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = (Math.random() - 0.5) * Math.PI;
+    partPos[i * 3]     = r * Math.cos(theta) * Math.cos(phi);
+    partPos[i * 3 + 1] = r * Math.sin(phi) * 3;
+    partPos[i * 3 + 2] = r * Math.sin(theta) * Math.cos(phi);
+  }
+  const partGeom = new THREE.BufferGeometry();
+  partGeom.setAttribute('position', new THREE.BufferAttribute(partPos, 3));
+  const partMat = new THREE.PointsMaterial({
+    color: 0xc9a96a,
+    size: 0.5,
+    map: makeParticleTexture(),
+    transparent: true,
+    opacity: 0.55,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending
+  });
+  const particles = new THREE.Points(partGeom, partMat);
+  scene.add(particles);
+
+  // -- Camera path waypoints per chapter
+  const waypoints = [
+    { pos: new THREE.Vector3(0, 0, 18),  look: new THREE.Vector3(0, 0, 0) },    // 01 Bienvenida
+    { pos: new THREE.Vector3(8, 2, 12),  look: new THREE.Vector3(0, 0, 0) },    // 02 Lavado
+    { pos: new THREE.Vector3(-6, -1, 10),look: new THREE.Vector3(0, 0, 0) },    // 03 Corte
+    { pos: new THREE.Vector3(4, -3, 8),  look: new THREE.Vector3(0, 1, 0) },    // 04 Navaja
+    { pos: new THREE.Vector3(0, 5, 14),  look: new THREE.Vector3(0, 0, 0) }     // 05 Toalla
+  ];
+
+  const camPos = new THREE.Vector3().copy(waypoints[0].pos);
+  const camLook = new THREE.Vector3().copy(waypoints[0].look);
+  const targetPos = new THREE.Vector3();
+  const targetLook = new THREE.Vector3();
+  let scrollProgress = 0;
+
+  // Chapter activation
+  const chapters = document.querySelectorAll('.ritual-chapters .chapter');
+  const ritualBar = document.getElementById('ritualBar');
+  const ritualNum = document.getElementById('ritualNum');
+  let activeChapter = -1;
+
+  function setChapter(index) {
+    if (index === activeChapter) return;
+    activeChapter = index;
+    chapters.forEach((c, i) => c.classList.toggle('active', i === index));
+    if (ritualNum) ritualNum.textContent = String(index + 1).padStart(2, '0');
+  }
+  setChapter(0);
+
+  // ScrollTrigger pin + scrub
+  if (window.ScrollTrigger) {
+    ScrollTrigger.create({
+      trigger: '.ritual',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.8,
+      onUpdate: self => {
+        scrollProgress = self.progress;
+        const idx = Math.min(waypoints.length - 1, Math.floor(scrollProgress * waypoints.length));
+        const localT = (scrollProgress * waypoints.length) - idx;
+        const next = waypoints[Math.min(idx + 1, waypoints.length - 1)];
+        const curr = waypoints[idx];
+
+        targetPos.lerpVectors(curr.pos, next.pos, localT);
+        targetLook.lerpVectors(curr.look, next.look, localT);
+
+        setChapter(idx);
+        if (ritualBar) ritualBar.style.width = (scrollProgress * 100) + '%';
+      }
+    });
+  }
+
+  // Resize
+  function onResize() {
+    const { w, h } = getSize();
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', onResize);
+  // Re-size after a tick in case layout wasn't ready
+  requestAnimationFrame(onResize);
+  setTimeout(onResize, 200);
+
+  // Texture scroll offset for the pole (the iconic illusion of stripes moving up)
+  const clock = new THREE.Clock();
+  function tick() {
+    const t = clock.getElapsedTime();
+
+    // Smooth camera approach
+    camPos.lerp(targetPos, 0.06);
+    camLook.lerp(targetLook, 0.06);
+    camera.position.copy(camPos);
+    camera.lookAt(camLook);
+
+    // Pole texture animation (stripes climbing)
+    stripeTexture.offset.y -= 0.004;
+
+    // Pole rotation
+    poleGroup.rotation.y = t * 0.25 + scrollProgress * Math.PI * 2;
+
+    // Rings counter-rotation
+    ringSet.children.forEach((r, i) => {
+      r.rotation.z = t * r.userData.speed * (i % 2 === 0 ? 1 : -1);
+    });
+
+    // Particles drift
+    particles.rotation.y = t * 0.02;
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+/* ---------- Barber pole stripe texture ---------- */
+function makeBarberPoleTexture() {
+  const w = 256, h = 256;
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const ctx = c.getContext('2d');
+
+  // background — deep cream
+  ctx.fillStyle = '#f4ede4';
+  ctx.fillRect(0, 0, w, h);
+
+  // diagonal gold stripes — luxury take on the classic barber pole
+  ctx.save();
+  ctx.translate(w / 2, h / 2);
+  ctx.rotate(-Math.PI / 4);
+  const stripeW = 38;
+  ctx.fillStyle = '#c9a96a';
+  for (let x = -w; x < w * 2; x += stripeW * 2) {
+    ctx.fillRect(x, -h, stripeW, h * 2);
+  }
+  // thin dark accent stripe
+  ctx.fillStyle = '#0a0908';
+  for (let x = -w + stripeW; x < w * 2; x += stripeW * 2) {
+    ctx.fillRect(x, -h, 3, h * 2);
+  }
+  ctx.restore();
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.anisotropy = 8;
+  return tex;
 }
 
 /* ---------- Particle texture helper ---------- */

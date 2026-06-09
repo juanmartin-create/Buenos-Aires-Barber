@@ -182,6 +182,53 @@
   </div>
 </section>
 
+<!-- EL RITUAL — Scrollytelling -->
+<section class="ritual" id="ritual">
+  <div class="ritual-pin">
+    <canvas id="ritualCanvas" class="ritual-canvas"></canvas>
+
+    <div class="ritual-overlay">
+      <div class="container ritual-grid">
+        <div class="ritual-side ritual-eyebrow-col">
+          <p class="eyebrow">— El Ritual</p>
+          <div class="ritual-progress">
+            <div class="ritual-progress-bar" id="ritualBar"></div>
+          </div>
+          <p class="ritual-count"><span id="ritualNum">01</span> / 05</p>
+        </div>
+
+        <div class="ritual-side ritual-chapters">
+          <article class="chapter" data-step="0">
+            <span class="chapter-num">01</span>
+            <h3>Bienvenida</h3>
+            <p>Te recibimos con un café o un whisky. Apagás el celular. El tiempo empieza a moverse distinto.</p>
+          </article>
+          <article class="chapter" data-step="1">
+            <span class="chapter-num">02</span>
+            <h3>Lavado</h3>
+            <p>Agua caliente, masaje en el cuero cabelludo y productos premium. El pelo queda listo para la tijera.</p>
+          </article>
+          <article class="chapter" data-step="2">
+            <span class="chapter-num">03</span>
+            <h3>Corte</h3>
+            <p>Tijera y máquina, milímetro a milímetro. El corte se construye conversando con tu rostro, no con un manual.</p>
+          </article>
+          <article class="chapter" data-step="3">
+            <span class="chapter-num">04</span>
+            <h3>Navaja</h3>
+            <p>Afeitado clásico con navaja, espuma caliente y aceites pre-shave. El gesto más antiguo de la barbería.</p>
+          </article>
+          <article class="chapter" data-step="4">
+            <span class="chapter-num">05</span>
+            <h3>Toalla caliente</h3>
+            <p>Toalla a temperatura justa, bálsamo, perfume. Salís otro. Ese es el punto.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- COLECCIONES -->
 <section class="section colecciones" id="colecciones">
   <div class="container">
@@ -365,10 +412,10 @@
   </div>
 </footer>
 
-<!-- three.js + GSAP via CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<!-- three.js + GSAP via CDN (jsdelivr/unpkg — más confiables que cdnjs para Three) -->
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
