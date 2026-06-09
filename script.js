@@ -44,11 +44,156 @@ document.addEventListener('DOMContentLoaded', () => {
     setupImageMasks();
   }
 
+  // ----- Neon glow + lightbox + image fallbacks -----
+  setupNeonGlow();
+  setupClientesFeed();
+  setupLightbox();
+  setupImageFallbacks();
+
   // ----- three.js scenes -----
   initHeroScene();
   initQuoteScene();
-  initRitualScene();
 });
+
+/* ---------- Ambient neon glow behind imagery ---------- */
+function setupNeonGlow() {
+  document.querySelectorAll('.barber, .collection').forEach(card => {
+    const img = card.querySelector('img');
+    if (!img) return;
+    card.classList.add('neon-host');
+    const glow = document.createElement('span');
+    glow.className = 'neon-glow';
+    const apply = () => { glow.style.backgroundImage = `url("${img.currentSrc || img.src}")`; };
+    if (img.complete && img.naturalWidth) apply();
+    else img.addEventListener('load', apply, { once: true });
+    card.insertBefore(glow, card.firstChild);
+  });
+}
+
+/* ---------- Clientes: vertical Instagram scroll feed ---------- */
+function setupClientesFeed() {
+  const section = document.getElementById('clientesFeed');
+  const pin = document.getElementById('cfPin');
+  const media = document.getElementById('cfMedia');
+  if (!section || !pin || !media) return;
+
+  const photos = [...media.querySelectorAll('.cf-photo')];
+  const dots = [...document.querySelectorAll('#cfProgress .cf-dot')];
+  const numEl = document.getElementById('cfNum');
+  const glow = document.getElementById('cfGlow');
+  const n = photos.length;
+  if (!n) return;
+
+  function setActive(idx) {
+    dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
+    if (numEl) numEl.textContent = String(idx + 1).padStart(2, '0');
+    const ph = photos[idx];
+    const src = ph && (ph.currentSrc || ph.src);
+    if (glow && src) glow.style.backgroundImage = `url("${src}")`;
+  }
+
+  // initial stacked state
+  photos.forEach((ph, i) => {
+    ph.style.opacity = i === 0 ? '1' : '0';
+    ph.style.transform = `translateY(${i === 0 ? 0 : 8}%) scale(${i === 0 ? 1 : 0.96})`;
+    ph.style.zIndex = String(n - i);
+  });
+  setActive(0);
+
+  if (!window.gsap || !window.ScrollTrigger) return;
+
+  let lastActive = 0;
+  ScrollTrigger.create({
+    trigger: section,
+    start: 'top top',
+    end: () => '+=' + (window.innerHeight * n),
+    pin: pin,
+    scrub: true,
+    anticipatePin: 1,
+    invalidateOnRefresh: true,
+    onUpdate: self => {
+      const p = self.progress * (n - 1); // 0 .. n-1
+      photos.forEach((ph, i) => {
+        const d = i - p;
+        const ad = Math.min(Math.abs(d), 1);
+        ph.style.opacity = String(1 - ad);
+        ph.style.transform = `translateY(${d * 10}%) scale(${1 - ad * 0.05})`;
+        ph.style.zIndex = String(100 - Math.round(Math.abs(d) * 10));
+      });
+      const active = Math.max(0, Math.min(n - 1, Math.round(p)));
+      if (active !== lastActive) { lastActive = active; setActive(active); }
+    }
+  });
+}
+
+/* ---------- Stateful collections lightbox ---------- */
+function setupLightbox() {
+  const box = document.getElementById('lightbox');
+  if (!box) return;
+  const imgEl = document.getElementById('lightboxImg');
+  const glowEl = document.getElementById('lightboxGlow');
+  const titleEl = document.getElementById('lightboxTitle');
+  const indexEl = document.getElementById('lightboxIndex');
+  const items = [...document.querySelectorAll('.collections-grid .collection')].map((el, i) => {
+    const img = el.querySelector('img');
+    const h3 = el.querySelector('h3');
+    return { src: img ? (img.currentSrc || img.src) : '', title: h3 ? h3.textContent.trim() : '', n: String(i + 1).padStart(2, '0') };
+  });
+  let current = 0;
+
+  function render() {
+    const it = items[current];
+    if (!it) return;
+    imgEl.src = it.src;
+    imgEl.alt = it.title;
+    glowEl.style.backgroundImage = `url("${it.src}")`;
+    titleEl.textContent = it.title;
+    indexEl.textContent = it.n;
+  }
+  function open(i) {
+    current = i;
+    render();
+    box.classList.add('open');
+    box.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    box.classList.remove('open');
+    box.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+  function step(dir) {
+    current = (current + dir + items.length) % items.length;
+    render();
+    if (window.gsap) gsap.fromTo(imgEl, { opacity: 0.3, scale: 0.98 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' });
+  }
+
+  document.querySelectorAll('.collections-grid .collection').forEach((el, i) => {
+    el.addEventListener('click', e => { e.preventDefault(); open(i); });
+  });
+  document.getElementById('lightboxClose').addEventListener('click', close);
+  document.getElementById('lightboxPrev').addEventListener('click', () => step(-1));
+  document.getElementById('lightboxNext').addEventListener('click', () => step(1));
+  box.addEventListener('click', e => { if (e.target === box) close(); });
+  document.addEventListener('keydown', e => {
+    if (!box.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    else if (e.key === 'ArrowRight') step(1);
+    else if (e.key === 'ArrowLeft') step(-1);
+  });
+}
+
+/* ---------- Neon placeholder when a photo fails ---------- */
+function setupImageFallbacks() {
+  const mark = img => {
+    const wrap = img.closest('.collection-img, .barber-img, .reveal-image, .contacto-map, .prensa-card') || img.parentElement;
+    if (wrap) wrap.classList.add('img-failed');
+  };
+  document.querySelectorAll('img').forEach(img => {
+    if (img.complete && img.naturalWidth === 0) mark(img);
+    img.addEventListener('error', () => mark(img));
+  });
+}
 
 /* ---------- Hero intro animation ---------- */
 function runHeroIntro() {
@@ -218,22 +363,6 @@ function initHeroScene() {
   const particles = new THREE.Points(geometry, material);
   scene.add(particles);
 
-  // -- Wireframe ring (subtle, behind text)
-  const ringGeom = new THREE.TorusGeometry(22, 0.08, 16, 200);
-  const ringMat = new THREE.MeshBasicMaterial({
-    color: 0xc9a96a, transparent: true, opacity: 0.18, wireframe: true
-  });
-  const ring = new THREE.Mesh(ringGeom, ringMat);
-  ring.position.z = -10;
-  scene.add(ring);
-
-  const ring2Geom = new THREE.TorusGeometry(30, 0.04, 12, 200);
-  const ring2 = new THREE.Mesh(ring2Geom, ringMat.clone());
-  ring2.material.opacity = 0.08;
-  ring2.position.z = -15;
-  ring2.rotation.x = Math.PI / 2.4;
-  scene.add(ring2);
-
   // -- Mouse parallax
   const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
   window.addEventListener('mousemove', e => {
@@ -274,10 +403,6 @@ function initHeroScene() {
 
     particles.rotation.y = t * 0.04 + mouse.x * 0.2;
     particles.rotation.x = mouse.y * 0.15;
-
-    ring.rotation.x = t * 0.1;
-    ring.rotation.y = t * 0.06;
-    ring2.rotation.z = -t * 0.05;
 
     renderer.render(scene, camera);
     requestAnimationFrame(tick);
@@ -339,249 +464,6 @@ function initQuoteScene() {
     requestAnimationFrame(tick);
   }
   tick();
-}
-
-/* =========================================================
-   THREE.JS — El Ritual: scroll-pinned cinematic scene
-   ========================================================= */
-function initRitualScene() {
-  const canvas = document.getElementById('ritualCanvas');
-  if (!canvas || !window.THREE) return;
-
-  // Robust size getter — falls back to window if canvas has no layout yet
-  const getSize = () => {
-    const rect = canvas.getBoundingClientRect();
-    return {
-      w: rect.width  || canvas.clientWidth  || window.innerWidth,
-      h: rect.height || canvas.clientHeight || window.innerHeight
-    };
-  };
-
-  const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x050505, 0.03);
-
-  const initial = getSize();
-  const camera = new THREE.PerspectiveCamera(45, initial.w / initial.h, 0.1, 1000);
-  camera.position.set(0, 0, 18);
-
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setClearColor(0x050505, 0); // transparent so section bg shows through
-  renderer.setSize(initial.w, initial.h, false);
-
-  // -- Lighting (subtle gold rim)
-  const ambient = new THREE.AmbientLight(0x1a1816, 0.4);
-  scene.add(ambient);
-  const keyLight = new THREE.DirectionalLight(0xc9a96a, 1.4);
-  keyLight.position.set(6, 8, 6);
-  scene.add(keyLight);
-  const rimLight = new THREE.DirectionalLight(0xfff5e0, 0.6);
-  rimLight.position.set(-6, -4, -3);
-  scene.add(rimLight);
-
-  // -- Barber Pole (custom canvas texture with diagonal stripes)
-  const stripeTexture = makeBarberPoleTexture();
-  stripeTexture.wrapS = THREE.RepeatWrapping;
-  stripeTexture.wrapT = THREE.RepeatWrapping;
-
-  const poleGroup = new THREE.Group();
-
-  // glass cylinder with stripes
-  const poleGeom = new THREE.CylinderGeometry(1.2, 1.2, 8, 64, 1, true);
-  const poleMat = new THREE.MeshStandardMaterial({
-    map: stripeTexture,
-    metalness: 0.4,
-    roughness: 0.3,
-    side: THREE.DoubleSide
-  });
-  const pole = new THREE.Mesh(poleGeom, poleMat);
-  poleGroup.add(pole);
-
-  // top and bottom caps (gold)
-  const capGeom = new THREE.CylinderGeometry(1.35, 1.35, 0.6, 64);
-  const capMat = new THREE.MeshStandardMaterial({ color: 0xc9a96a, metalness: 0.9, roughness: 0.25 });
-  const capTop = new THREE.Mesh(capGeom, capMat);
-  capTop.position.y = 4.3;
-  poleGroup.add(capTop);
-  const capBot = new THREE.Mesh(capGeom, capMat);
-  capBot.position.y = -4.3;
-  poleGroup.add(capBot);
-
-  // small spheres on ends
-  const ballGeom = new THREE.SphereGeometry(0.5, 32, 32);
-  const ballTop = new THREE.Mesh(ballGeom, capMat);
-  ballTop.position.y = 4.85;
-  poleGroup.add(ballTop);
-  const ballBot = new THREE.Mesh(ballGeom, capMat);
-  ballBot.position.y = -4.85;
-  poleGroup.add(ballBot);
-
-  scene.add(poleGroup);
-
-  // -- Floating decorative rings around the pole
-  const ringMat = new THREE.MeshBasicMaterial({ color: 0xc9a96a, transparent: true, opacity: 0.18, wireframe: true });
-  const ringSet = new THREE.Group();
-  for (let i = 0; i < 3; i++) {
-    const r = 4 + i * 1.5;
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.02, 8, 120), ringMat.clone());
-    ring.material.opacity = 0.25 - i * 0.07;
-    ring.rotation.x = Math.PI / 2 + (i - 1) * 0.2;
-    ring.userData.speed = 0.08 + i * 0.04;
-    ringSet.add(ring);
-  }
-  scene.add(ringSet);
-
-  // -- Particle field
-  const partCount = 900;
-  const partPos = new Float32Array(partCount * 3);
-  for (let i = 0; i < partCount; i++) {
-    const r = 8 + Math.random() * 20;
-    const theta = Math.random() * Math.PI * 2;
-    const phi = (Math.random() - 0.5) * Math.PI;
-    partPos[i * 3]     = r * Math.cos(theta) * Math.cos(phi);
-    partPos[i * 3 + 1] = r * Math.sin(phi) * 3;
-    partPos[i * 3 + 2] = r * Math.sin(theta) * Math.cos(phi);
-  }
-  const partGeom = new THREE.BufferGeometry();
-  partGeom.setAttribute('position', new THREE.BufferAttribute(partPos, 3));
-  const partMat = new THREE.PointsMaterial({
-    color: 0xc9a96a,
-    size: 0.5,
-    map: makeParticleTexture(),
-    transparent: true,
-    opacity: 0.55,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending
-  });
-  const particles = new THREE.Points(partGeom, partMat);
-  scene.add(particles);
-
-  // -- Camera path waypoints per chapter
-  const waypoints = [
-    { pos: new THREE.Vector3(0, 0, 18),  look: new THREE.Vector3(0, 0, 0) },    // 01 Bienvenida
-    { pos: new THREE.Vector3(8, 2, 12),  look: new THREE.Vector3(0, 0, 0) },    // 02 Lavado
-    { pos: new THREE.Vector3(-6, -1, 10),look: new THREE.Vector3(0, 0, 0) },    // 03 Corte
-    { pos: new THREE.Vector3(4, -3, 8),  look: new THREE.Vector3(0, 1, 0) },    // 04 Navaja
-    { pos: new THREE.Vector3(0, 5, 14),  look: new THREE.Vector3(0, 0, 0) }     // 05 Toalla
-  ];
-
-  const camPos = new THREE.Vector3().copy(waypoints[0].pos);
-  const camLook = new THREE.Vector3().copy(waypoints[0].look);
-  const targetPos = new THREE.Vector3();
-  const targetLook = new THREE.Vector3();
-  let scrollProgress = 0;
-
-  // Chapter activation
-  const chapters = document.querySelectorAll('.ritual-chapters .chapter');
-  const ritualBar = document.getElementById('ritualBar');
-  const ritualNum = document.getElementById('ritualNum');
-  let activeChapter = -1;
-
-  function setChapter(index) {
-    if (index === activeChapter) return;
-    activeChapter = index;
-    chapters.forEach((c, i) => c.classList.toggle('active', i === index));
-    if (ritualNum) ritualNum.textContent = String(index + 1).padStart(2, '0');
-  }
-  setChapter(0);
-
-  // ScrollTrigger pin + scrub
-  if (window.ScrollTrigger) {
-    ScrollTrigger.create({
-      trigger: '.ritual',
-      start: 'top top',
-      end: 'bottom bottom',
-      scrub: 0.8,
-      onUpdate: self => {
-        scrollProgress = self.progress;
-        const idx = Math.min(waypoints.length - 1, Math.floor(scrollProgress * waypoints.length));
-        const localT = (scrollProgress * waypoints.length) - idx;
-        const next = waypoints[Math.min(idx + 1, waypoints.length - 1)];
-        const curr = waypoints[idx];
-
-        targetPos.lerpVectors(curr.pos, next.pos, localT);
-        targetLook.lerpVectors(curr.look, next.look, localT);
-
-        setChapter(idx);
-        if (ritualBar) ritualBar.style.width = (scrollProgress * 100) + '%';
-      }
-    });
-  }
-
-  // Resize
-  function onResize() {
-    const { w, h } = getSize();
-    if (!w || !h) return;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
-  window.addEventListener('resize', onResize);
-  // Re-size after a tick in case layout wasn't ready
-  requestAnimationFrame(onResize);
-  setTimeout(onResize, 200);
-
-  // Texture scroll offset for the pole (the iconic illusion of stripes moving up)
-  const clock = new THREE.Clock();
-  function tick() {
-    const t = clock.getElapsedTime();
-
-    // Smooth camera approach
-    camPos.lerp(targetPos, 0.06);
-    camLook.lerp(targetLook, 0.06);
-    camera.position.copy(camPos);
-    camera.lookAt(camLook);
-
-    // Pole texture animation (stripes climbing)
-    stripeTexture.offset.y -= 0.004;
-
-    // Pole rotation
-    poleGroup.rotation.y = t * 0.25 + scrollProgress * Math.PI * 2;
-
-    // Rings counter-rotation
-    ringSet.children.forEach((r, i) => {
-      r.rotation.z = t * r.userData.speed * (i % 2 === 0 ? 1 : -1);
-    });
-
-    // Particles drift
-    particles.rotation.y = t * 0.02;
-
-    renderer.render(scene, camera);
-    requestAnimationFrame(tick);
-  }
-  tick();
-}
-
-/* ---------- Barber pole stripe texture ---------- */
-function makeBarberPoleTexture() {
-  const w = 256, h = 256;
-  const c = document.createElement('canvas');
-  c.width = w; c.height = h;
-  const ctx = c.getContext('2d');
-
-  // background — deep cream
-  ctx.fillStyle = '#f4ede4';
-  ctx.fillRect(0, 0, w, h);
-
-  // diagonal gold stripes — luxury take on the classic barber pole
-  ctx.save();
-  ctx.translate(w / 2, h / 2);
-  ctx.rotate(-Math.PI / 4);
-  const stripeW = 38;
-  ctx.fillStyle = '#c9a96a';
-  for (let x = -w; x < w * 2; x += stripeW * 2) {
-    ctx.fillRect(x, -h, stripeW, h * 2);
-  }
-  // thin dark accent stripe
-  ctx.fillStyle = '#0a0908';
-  for (let x = -w + stripeW; x < w * 2; x += stripeW * 2) {
-    ctx.fillRect(x, -h, 3, h * 2);
-  }
-  ctx.restore();
-
-  const tex = new THREE.CanvasTexture(c);
-  tex.anisotropy = 8;
-  return tex;
 }
 
 /* ---------- Particle texture helper ---------- */
