@@ -24,7 +24,7 @@
 <header class="nav" id="nav">
   <div class="nav-inner">
     <a href="#hero" class="nav-logo">
-      <img src="https://buenosairesbarbershop.com/assets/img/logo/logo_chico.png" alt="Buenos Aires Barbershop" />
+      <img src="assets/img/logo/logo_chico.png" alt="Buenos Aires Barbershop" />
     </a>
     <nav class="nav-links">
       <a href="#barberia">La Barbería</a>
@@ -57,20 +57,20 @@
 <!-- HERO -->
 <section class="hero" id="hero">
   <div class="hero-bg">
-    <img src="https://buenosairesbarbershop.com/assets/img/barberia-interior.jpg" alt="" />
+    <img src="assets/img/barberia-interior.jpg" alt="" data-cms="hero_bg" />
     <div class="hero-overlay"></div>
   </div>
   <canvas id="heroCanvas" class="hero-canvas"></canvas>
 
   <div class="hero-content">
     <p class="hero-eyebrow"><span class="line"></span> EST. BUENOS AIRES</p>
-    <h1 class="hero-title">
+    <h1 class="hero-title" data-cms="hero_titulo" data-cms-default="El último *ritual* masculino.">
       <span class="word">El</span>
       <span class="word">último</span>
       <span class="word italic">ritual</span>
       <span class="word">masculino.</span>
     </h1>
-    <p class="hero-sub">Cada corte incluye una bebida de cortesía — café Segafredo, cerveza o gaseosa Cunnington. Cortes, barba y afeitado clásico en el corazón de Buenos Aires.</p>
+    <p class="hero-sub" data-cms="hero_sub">Cada corte incluye una bebida de cortesía — café Segafredo, cerveza o gaseosa Cunnington. Cortes, barba y afeitado clásico en el corazón de Buenos Aires.</p>
     <div class="hero-actions">
       <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="btn btn-neon">
         <span class="btn-neon-glow" aria-hidden="true"></span>
@@ -79,7 +79,7 @@
       </a>
       <a href="#barberia" class="btn btn-ghost">Conocer la casa</a>
     </div>
-    <p class="hero-gift-tagline" id="giftTagline">No regalás un corte, regalás una experiencia.</p>
+    <p class="hero-gift-tagline" id="giftTagline" data-cms="hero_gift_tagline">No regalás un corte, regalás una experiencia.</p>
   </div>
 
   <div class="hero-scroll">
@@ -107,7 +107,7 @@
 <section class="section barberia" id="barberia">
   <div class="container grid-2" data-comment-anchor="63c8d1f37c-div">
     <div class="reveal-image">
-      <img class="parallax-img" data-speed="0.15" src="https://buenosairesbarbershop.com/assets/img/historia_diego.jpg" alt="Diego, fundador" />
+      <img class="parallax-img" data-speed="0.15" src="assets/img/historia_diego.jpg" alt="Diego, fundador" data-cms="historia_img" />
       <div class="image-mask"></div>
     </div>
 
@@ -120,42 +120,42 @@
 
   <div class="container">
     <div class="services">
-      <div class="service-item reveal">
+      <div class="service-item reveal" data-servicio="corte-cabello">
         <span class="service-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg></span>
         <h3>Corte de cabello</h3>
         <p>Incluye lavado y productos premium para el peinado. Terminaciones a navaja.</p>
         <div class="service-meta"><span class="service-price">$30.000</span><span class="service-dur">40 min</span></div>
         <span class="service-cash">$27.000 abonando en efectivo</span>
       </div>
-      <div class="service-item reveal">
+      <div class="service-item reveal" data-servicio="corte-arreglo-barba">
         <span class="service-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15 9 22 9.3 16.5 14 18.5 21 12 17 5.5 21 7.5 14 2 9.3 9 9 12 2"></polygon></svg></span>
         <h3>Corte de cabello y arreglo de barba</h3>
         <p>Corte de cabello con lavado y arreglo de barba completo con toallas calientes.</p>
         <div class="service-meta"><span class="service-price">$41.000</span><span class="service-dur">1 h 10 min</span></div>
         <span class="service-cash">$37.000 abonando en efectivo</span>
       </div>
-      <div class="service-item reveal">
+      <div class="service-item reveal" data-servicio="arreglo-barba">
         <span class="service-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"></path><path d="M5 7v4M9 7v6M12 7v4M15 7v6M19 7v4"></path></svg></span>
         <h3>Arreglo de barba</h3>
         <p>Ritual de barba con toalla caliente y fría, perfilado a navaja y cuidado de la piel.</p>
         <div class="service-meta"><span class="service-price">$23.000</span><span class="service-dur">30 min</span></div>
         <span class="service-cash">$21.000 abonando en efectivo</span>
       </div>
-      <div class="service-item reveal">
+      <div class="service-item reveal" data-servicio="rapado-arreglo-barba">
         <span class="service-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="6" rx="1"></rect><path d="M4 9v3l3 2h10l3-2V9"></path><line x1="8" y1="3" x2="8" y2="1.5"></line><line x1="12" y1="3" x2="12" y2="1.5"></line><line x1="16" y1="3" x2="16" y2="1.5"></line></svg></span>
         <h3>Rapado y arreglo de barba</h3>
         <p>Rapado con máquina a un mismo nivel y arreglo de barba completo.</p>
         <div class="service-meta"><span class="service-price">$30.000</span><span class="service-dur">40 min</span></div>
         <span class="service-cash">$27.000 abonando en efectivo</span>
       </div>
-      <div class="service-item reveal">
+      <div class="service-item reveal" data-servicio="corte-afeitado-total">
         <span class="service-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.4 6 10.5a6 6 0 0 1-12 0C6 9.4 12 3 12 3z"></path></svg></span>
         <h3>Corte y afeitado total <span class="service-sub">(quitar toda la barba)</span></h3>
         <p>Una experiencia completa que combina corte de cabello y afeitado total a navaja.</p>
         <div class="service-meta"><span class="service-price">$42.000</span><span class="service-dur">1 h 10 min</span></div>
         <span class="service-cash">$38.000 abonando en efectivo</span>
       </div>
-      <div class="service-item reveal">
+      <div class="service-item reveal" data-servicio="afeitado-italiano">
         <span class="service-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16c4 0 7-2 10-5l5-5c1-1 0-2-1-1l-8 8"></path><path d="M4 16a3 3 0 0 0 5 2l3-3"></path></svg></span>
         <h3>Afeitado Tradicional Italiano</h3>
         <p>Ritual de afeitado clásico a navaja con rasurado completo a cero, toallas calientes y frías y cremas para el cuidado de la piel.</p>
@@ -188,31 +188,31 @@
 
     <div class="team-grid">
       <article class="barber reveal-up">
-        <div class="barber-img"><img src="https://buenosairesbarbershop.com/assets/img/barberos/diego3581.jpg" alt="Luis" /></div>
+        <div class="barber-img"><img src="assets/img/barberos/diego3581.jpg" alt="Luis" /></div>
         <h3>Luis</h3><p>Barbero</p>
       </article>
       <article class="barber reveal-up">
-        <div class="barber-img"><img src="https://buenosairesbarbershop.com/assets/img/barberos/nahuel4008.jpg" alt="Nahuel" /></div>
+        <div class="barber-img"><img src="assets/img/barberos/nahuel4008.jpg" alt="Nahuel" /></div>
         <h3>Nahuel</h3><p>Barbero</p>
       </article>
       <article class="barber reveal-up">
-        <div class="barber-img"><img src="https://buenosairesbarbershop.com/assets/img/barberos/ivan1720.jpg" alt="Iván" /></div>
+        <div class="barber-img"><img src="assets/img/barberos/ivan1720.jpg" alt="Iván" /></div>
         <h3>Iván</h3><p>Barbero</p>
       </article>
       <article class="barber reveal-up">
-        <div class="barber-img"><img src="https://buenosairesbarbershop.com/assets/img/barberos/felix5786.jpg" alt="Lucas" /></div>
+        <div class="barber-img"><img src="assets/img/barberos/felix5786.jpg" alt="Lucas" /></div>
         <h3>Lucas</h3><p>Barbero</p>
       </article>
       <article class="barber reveal-up">
-        <div class="barber-img"><img src="https://buenosairesbarbershop.com/assets/img/barberos/maxi5536.jpg" alt="Brian" /></div>
+        <div class="barber-img"><img src="assets/img/barberos/maxi5536.jpg" alt="Brian" /></div>
         <h3>Brian</h3><p>Barbero</p>
       </article>
       <article class="barber reveal-up">
-        <div class="barber-img"><img src="https://buenosairesbarbershop.com/assets/img/barberos/isaias_3816.jpeg" alt="Isaías" /></div>
+        <div class="barber-img"><img src="assets/img/barberos/isaias_3816.jpeg" alt="Isaías" /></div>
         <h3>Isaías</h3><p>Barbero</p>
       </article>
       <article class="barber reveal-up">
-        <div class="barber-img"><img src="https://buenosairesbarbershop.com/assets/img/barberos/diego5365.jpeg" alt="Diego" /></div>
+        <div class="barber-img"><img src="assets/img/barberos/diego5365.jpeg" alt="Diego" /></div>
         <h3>Diego</h3><p>Fundador</p>
       </article>
     </div>
@@ -231,19 +231,19 @@
 
   <div class="collections-grid">
     <a class="collection reveal-up" href="#">
-      <div class="collection-img"><img src="https://drive.google.com/thumbnail?id=1qkVz7KZ-PQHZA4CHebk2ntQ9_WCapRKV&sz=w1200" alt="" /></div>
+      <div class="collection-img"><img src="assets/img/colecciones/coleccion-1.jpg" alt="" /></div>
       <div class="collection-meta"><span>01</span><h3>Summer</h3></div>
     </a>
     <a class="collection reveal-up" href="#">
-      <div class="collection-img"><img src="https://drive.google.com/thumbnail?id=1_k8Tcui5fGNIYJ94wvYMrEBnZw3gJOES&sz=w1200" alt="" /></div>
+      <div class="collection-img"><img src="assets/img/colecciones/coleccion-2.jpg" alt="" /></div>
       <div class="collection-meta"><span>02</span><h3>Spring</h3></div>
     </a>
     <a class="collection reveal-up" href="#">
-      <div class="collection-img"><img src="https://drive.google.com/thumbnail?id=1NHrH15JS4oGsEmRCc3Mq3cVMT7mv6d1x&sz=w1200" alt="" /></div>
+      <div class="collection-img"><img src="assets/img/colecciones/coleccion-3.jpg" alt="" /></div>
       <div class="collection-meta"><span>03</span><h3>Winter</h3></div>
     </a>
     <a class="collection reveal-up" href="#">
-      <div class="collection-img"><img src="https://drive.google.com/thumbnail?id=1ujtSAjRSoSgNBBdXr6C49JNRmdiW12ZG&sz=w1200" alt="" /></div>
+      <div class="collection-img"><img src="assets/img/colecciones/coleccion-4.jpg" alt="" /></div>
       <div class="collection-meta"><span>04</span><h3>Autumn</h3></div>
     </a>
   </div>
@@ -297,7 +297,7 @@
 <!-- QUOTE / PULL QUOTE -->
 <section class="pullquote" data-comment-anchor="cc8d426871-section">
   <div class="pullquote-bg">
-    <img class="parallax-img" data-speed="0.18" src="https://www.clarin.com/2019/01/03/fI3F5DxNH_720x0__1.jpg" alt="Corte en Buenos Aires Barbershop" />
+    <img class="parallax-img" data-speed="0.18" src="assets/img/prensa/clarin.jpg" alt="Corte en Buenos Aires Barbershop" />
     <div class="pullquote-overlay"></div>
   </div>
   <div class="container">
@@ -322,17 +322,17 @@
 
   <div class="prensa-carousel" id="prensaCarousel">
     <div class="prensa-track">
-      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1_GdR-6pNNAMWxeVCXYaJLlzcy3e735pW&sz=w800" alt="La Nación"/></div>
-      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1XLr-DIzl9q1YvPhTYcyM28mo6m_cKuz5&sz=w800" alt="La Nación"/></div>
-      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=10zSIC9nNlKr4XFStddlrkG5LgUKxujaS&sz=w800" alt="El Intransigente"/></div>
-      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1KR2HAn5hptmgdx69VMV1jLj-CbWO9HVX&sz=w800" alt="Clarín"/></div>
-      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1dTqjbG5V6KPYOlVgdIAssJYxrm8WOvzx&sz=w800" alt="Artero Entrevista"/></div>
+      <div class="prensa-card"><img src="assets/img/prensa/prensa-1.jpg" alt="La Nación"/></div>
+      <div class="prensa-card"><img src="assets/img/prensa/prensa-2.jpg" alt="La Nación"/></div>
+      <div class="prensa-card"><img src="assets/img/prensa/prensa-3.jpg" alt="El Intransigente"/></div>
+      <div class="prensa-card"><img src="assets/img/prensa/prensa-4.jpg" alt="Clarín"/></div>
+      <div class="prensa-card"><img src="assets/img/prensa/prensa-5.jpg" alt="Artero Entrevista"/></div>
       <!-- duplicado para loop infinito -->
-      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1_GdR-6pNNAMWxeVCXYaJLlzcy3e735pW&sz=w800" alt=""/></div>
-      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1XLr-DIzl9q1YvPhTYcyM28mo6m_cKuz5&sz=w800" alt=""/></div>
-      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=10zSIC9nNlKr4XFStddlrkG5LgUKxujaS&sz=w800" alt=""/></div>
-      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1KR2HAn5hptmgdx69VMV1jLj-CbWO9HVX&sz=w800" alt=""/></div>
-      <div class="prensa-card"><img src="https://drive.google.com/thumbnail?id=1dTqjbG5V6KPYOlVgdIAssJYxrm8WOvzx&sz=w800" alt=""/></div>
+      <div class="prensa-card"><img src="assets/img/prensa/prensa-1.jpg" alt=""/></div>
+      <div class="prensa-card"><img src="assets/img/prensa/prensa-2.jpg" alt=""/></div>
+      <div class="prensa-card"><img src="assets/img/prensa/prensa-3.jpg" alt=""/></div>
+      <div class="prensa-card"><img src="assets/img/prensa/prensa-4.jpg" alt=""/></div>
+      <div class="prensa-card"><img src="assets/img/prensa/prensa-5.jpg" alt=""/></div>
     </div>
   </div>
 </section>
@@ -350,7 +350,7 @@
         <div class="review-head">
           <img src="https://lh3.googleusercontent.com/a-/ALV-UjU9d5oQVRcCjZgtNEveiPDwMElRioBBGTODIhQNUGwpbQBhoY8" alt=""/>
           <div><h4>Martín G.</h4><div class="stars">★★★★★</div></div>
-          <img class="google-logo" src="https://buenosairesbarbershop.com/assets/img/google-logo.svg" alt="Google"/>
+          <img class="google-logo" src="assets/img/google-logo.svg" alt="Google"/>
         </div>
         <p>"Atención impecable, ambiente clásico, y un corte que dura semanas. La mejor barbería de la ciudad."</p>
       </article>
@@ -359,7 +359,7 @@
         <div class="review-head">
           <img src="https://lh3.googleusercontent.com/a-/ALV-UjV17olIv7ByrQdh3wNhooRnD2R-Az3tJwqT_JElS2_a44t_Dbk8ZQ" alt=""/>
           <div><h4>Lucas F.</h4><div class="stars">★★★★★</div></div>
-          <img class="google-logo" src="https://buenosairesbarbershop.com/assets/img/google-logo.svg" alt="Google"/>
+          <img class="google-logo" src="assets/img/google-logo.svg" alt="Google"/>
         </div>
         <p>"El afeitado a navaja es una experiencia. Salís otra persona. Diego y su equipo son de otro nivel."</p>
       </article>
@@ -368,7 +368,7 @@
         <div class="review-head">
           <img src="https://lh3.googleusercontent.com/a/ACg8ocLDEoG1FAStmHcMHrQDXhzGUaJn-FyQaq-tw6Mbth_TEGzz6TE" alt=""/>
           <div><h4>Federico R.</h4><div class="stars">★★★★★</div></div>
-          <img class="google-logo" src="https://buenosairesbarbershop.com/assets/img/google-logo.svg" alt="Google"/>
+          <img class="google-logo" src="assets/img/google-logo.svg" alt="Google"/>
         </div>
         <p>"Llevo años yendo. Profesionalismo, oficio y un trato siempre cálido. Recomendado al 200%."</p>
       </article>
@@ -377,7 +377,7 @@
         <div class="review-head">
           <img src="https://lh3.googleusercontent.com/a/ACg8ocKsdE8xM7qFAp7jKFc6abKtSt9JtQMOYRYtCMWsMikvy6wYIw" alt=""/>
           <div><h4>Tomás L.</h4><div class="stars">★★★★★</div></div>
-          <img class="google-logo" src="https://buenosairesbarbershop.com/assets/img/google-logo.svg" alt="Google"/>
+          <img class="google-logo" src="assets/img/google-logo.svg" alt="Google"/>
         </div>
         <p>"La atención al detalle es notable. Cada visita es un ritual. No hay vuelta atrás."</p>
       </article>
@@ -386,7 +386,7 @@
         <div class="review-head">
           <img src="https://lh3.googleusercontent.com/a/ACg8ocIY-5x0RXBXKB3J8iNJlEn9Qpkypy9Hnp1uD1ty8gofskn-pg" alt=""/>
           <div><h4>Joaquín M.</h4><div class="stars">★★★★★</div></div>
-          <img class="google-logo" src="https://buenosairesbarbershop.com/assets/img/google-logo.svg" alt="Google"/>
+          <img class="google-logo" src="assets/img/google-logo.svg" alt="Google"/>
         </div>
         <p>"Sin duda la mejor barbería de Buenos Aires. La estética del lugar es tan cuidada como el corte."</p>
       </article>
@@ -399,10 +399,10 @@
   <div class="container">
     <p class="eyebrow center reveal">— Amigos de la casa</p>
     <div class="friends-grid">
-      <img class="reveal" src="https://buenosairesbarbershop.com/assets/img/logo/G_cunnington.png" alt="Cunnington"/>
-      <img class="reveal" src="https://buenosairesbarbershop.com/assets/img/logo/G_artero.png" alt="Artero"/>
-      <img class="reveal" src="https://buenosairesbarbershop.com/assets/img/logo/G_sagafredo.png" alt="Sagafredo"/>
-      <img class="reveal" src="https://buenosairesbarbershop.com/assets/img/logo/G_american.png" alt="American"/>
+      <img class="reveal" src="assets/img/logo/G_cunnington.png" alt="Cunnington"/>
+      <img class="reveal" src="assets/img/logo/G_artero.png" alt="Artero"/>
+      <img class="reveal" src="assets/img/logo/G_sagafredo.png" alt="Sagafredo"/>
+      <img class="reveal" src="assets/img/logo/G_american.png" alt="American"/>
     </div>
   </div>
 </section>
@@ -430,7 +430,7 @@
     </div>
 
     <div class="contacto-map reveal-image">
-      <img src="https://buenosairesbarbershop.com/assets/img/mapa.jpg" alt="Mapa Buenos Aires Barbershop"/>
+      <img src="assets/img/mapa.jpg" alt="Mapa Buenos Aires Barbershop"/>
     </div>
   </div>
 </section>
@@ -439,7 +439,7 @@
 <footer class="footer">
   <div class="container footer-inner">
     <div class="footer-brand">
-      <img src="https://buenosairesbarbershop.com/assets/img/logo/logo_grande_3_blano.png" alt="Buenos Aires Barbershop"/>
+      <img src="assets/img/logo/logo_grande_3_blano.png" alt="Buenos Aires Barbershop"/>
       <p>El último ritual masculino.</p>
     </div>
 
@@ -487,13 +487,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="script.js"></script>
 
-<!-- Tweaks panel (React + Babel) -->
-<div id="tweaks-root"></div>
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script type="text/babel" src="tweaks-panel.jsx"></script>
-<script type="text/babel" src="tweaks.jsx"></script>
+<!-- CMS: lee de Supabase y reemplaza textos/precios/imágenes si el dueño los cambió -->
+<script src="assets/js/supabase-config.js"></script>
+<script src="assets/js/cms.js" defer></script>
 
 <!-- Booksy widget -->
 <script type="text/javascript" src="https://booksy.com/widget/code.js?id=799&country=ar&lang=es"></script>

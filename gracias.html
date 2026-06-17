@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex" />
+<title>¡Gracias! · Buenos Aires Barbershop</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0908;--ink:#f4ede4;--ink-dim:#a89e91;--gold:#c9a96a;--line:rgba(244,237,228,.12)}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;
+    background:radial-gradient(120% 120% at 50% 0%,#171109 0%,#0a0908 60%);
+    color:var(--ink);font-family:'Inter',system-ui,sans-serif;text-align:center}
+  .card{max-width:480px}
+  .check{width:72px;height:72px;border-radius:50%;border:1px solid var(--gold);
+    display:grid;place-items:center;margin:0 auto 28px;color:var(--gold)}
+  .check svg{width:34px;height:34px}
+  h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,6vw,52px);
+    margin:0 0 14px;line-height:1.05}
+  h1 em{font-style:italic;color:var(--gold)}
+  p{color:var(--ink-dim);line-height:1.65;margin:0 0 14px}
+  .home{display:inline-block;margin-top:22px;padding:14px 28px;border:1px solid var(--line);
+    border-radius:2px;color:var(--ink);text-decoration:none;font-size:13px;
+    letter-spacing:.12em;text-transform:uppercase;transition:border-color .3s,color .3s}
+  .home:hover{border-color:var(--gold);color:var(--gold)}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="check">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </div>
+    <h1>¡Gracias por tu <em>regalo</em>!</h1>
+    <p>Tu compra fue procesada. En cuanto se confirme el pago, le enviamos la gift card con su código directamente al email de quien la recibe.</p>
+    <p>Si la pagaste con tarjeta, suele confirmarse en segundos. Por transferencia o efectivo puede tardar un poco más.</p>
+    <a class="home" href="index.html">Volver a la casa</a>
+  </div>
+</body>
+</html>

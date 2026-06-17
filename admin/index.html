@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Panel · Buenos Aires Barbershop</title>
+<link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="login" class="login-screen">
+  <form id="loginForm" class="login-card">
+    <h1>Buenos Aires Barbershop</h1>
+    <p class="login-sub">Panel de administración</p>
+    <label>Email
+      <input type="email" id="email" autocomplete="username" required />
+    </label>
+    <label>Contraseña
+      <input type="password" id="password" autocomplete="current-password" required />
+    </label>
+    <button type="submit" id="loginBtn">Entrar</button>
+    <p id="loginError" class="error" hidden></p>
+  </form>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app" hidden>
+  <header class="topbar">
+    <strong>Panel · Buenos Aires Barbershop</strong>
+    <div class="topbar-right">
+      <span id="userEmail" class="user-email"></span>
+      <button id="logoutBtn" class="btn-ghost">Salir</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="contenido">Contenido</button>
+    <button class="tab" data-tab="servicios">Precios y servicios</button>
+    <button class="tab" data-tab="giftcards">Gift Cards</button>
+    <button class="tab" data-tab="validar">Validar código</button>
+  </nav>
+
+  <main class="content">
+    <!-- CONTENIDO -->
+    <section id="tab-contenido" class="panel active">
+      <h2>Contenido de la landing</h2>
+      <p class="hint">Editá los textos e imágenes principales. Los cambios se ven en la web al recargar.</p>
+      <div id="contenidoForm" class="cards"></div>
+    </section>
+
+    <!-- SERVICIOS -->
+    <section id="tab-servicios" class="panel">
+      <h2>Precios y servicios</h2>
+      <p class="hint">Estos precios se muestran en la landing y se usan para las gift cards. Una sola fuente.</p>
+      <div id="serviciosForm" class="cards"></div>
+    </section>
+
+    <!-- GIFT CARDS -->
+    <section id="tab-giftcards" class="panel">
+      <h2>Gift Cards</h2>
+
+      <details class="create-gc">
+        <summary>＋ Crear gift card de cortesía (gratis)</summary>
+        <div class="card">
+          <p class="hint">Emití una gift card sin pago (regalo, promo o cortesía). Se genera un código activo al instante.</p>
+          <div class="field">
+            <label>Servicio</label>
+            <select id="newGcServicio"></select>
+          </div>
+          <div class="row">
+            <div class="field"><label>Valor ($)</label><input id="newGcMonto" type="number" /></div>
+            <div class="field"><label>Nombre del destinatario</label><input id="newGcName" type="text" placeholder="Opcional" /></div>
+          </div>
+          <div class="field"><label>Email del destinatario</label><input id="newGcEmail" type="email" placeholder="Opcional" /></div>
+          <div class="field"><label>Mensaje / dedicatoria</label><textarea id="newGcMsg" placeholder="Opcional"></textarea></div>
+          <div class="save-row">
+            <button id="newGcCreate" class="save-btn">Crear gift card</button>
+            <span id="newGcOk" class="saved-msg"></span>
+          </div>
+        </div>
+      </details>
+
+      <div class="toolbar">
+        <input type="search" id="gcSearch" placeholder="Buscar por código, destinatario o email…" />
+        <select id="gcFilter">
+          <option value="">Todas</option>
+          <option value="active">Activas</option>
+          <option value="redeemed">Canjeadas</option>
+          <option value="pending">Pendientes de pago</option>
+          <option value="expired">Vencidas</option>
+        </select>
+        <button id="gcReload" class="btn-ghost">↻ Actualizar</button>
+      </div>
+      <div id="gcTableWrap"></div>
+    </section>
+
+    <!-- VALIDAR CÓDIGO -->
+    <section id="tab-validar" class="panel">
+      <h2>Validar código</h2>
+      <p class="hint">Ingresá el código que trae el cliente para ver qué incluye y marcarlo como usado.</p>
+      <form id="validarForm" class="validar-box">
+        <input type="text" id="codeInput" placeholder="BAB-XXXX-XXXX" autocomplete="off" />
+        <button type="submit">Buscar</button>
+      </form>
+      <div id="validarResult"></div>
+    </section>
+  </main>
+</div>
+
+<!-- Supabase JS + config compartida con la landing -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

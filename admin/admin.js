@@ -1,0 +1,478 @@
+/* ============================================================
+ * admin.js · Panel de administración
+ * Login (Supabase Auth) + edición de contenido, precios, gift cards
+ * y validación de códigos. Todo protegido por RLS del lado del server.
+ * ============================================================ */
+(function () {
+  'use strict';
+
+  var cfg = window.SUPABASE_CONFIG;
+  if (!cfg || !cfg.url || !cfg.key) {
+    alert('Falta la configuración de Supabase (supabase-config.js).');
+    return;
+  }
+  var sb = supabase.createClient(cfg.url, cfg.key);
+
+  var $ = function (sel, root) { return (root || document).querySelector(sel); };
+  var el = function (tag, attrs, html) {
+    var e = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+    if (html != null) e.innerHTML = html;
+    return e;
+  };
+  var esc = function (s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  };
+  var fmtPrecio = function (n) { return '$' + (Math.round(Number(n) || 0)).toLocaleString('es-AR'); };
+  var fmtFecha = function (s) {
+    if (!s) return '—';
+    try { return new Date(s).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }); }
+    catch (e) { return s; }
+  };
+
+  // ---------- AUTH ----------
+  var loginScreen = $('#login'), appScreen = $('#app');
+
+  function showApp(session) {
+    loginScreen.hidden = true;
+    appScreen.hidden = false;
+    $('#userEmail').textContent = session.user.email;
+    loadContenido();
+    loadServicios();
+    loadGiftCards();
+  }
+  function showLogin() {
+    appScreen.hidden = true;
+    loginScreen.hidden = false;
+  }
+
+  $('#loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = $('#loginBtn'), errEl = $('#loginError');
+    errEl.hidden = true;
+    btn.disabled = true; btn.textContent = 'Entrando…';
+    sb.auth.signInWithPassword({ email: $('#email').value.trim(), password: $('#password').value })
+      .then(function (res) {
+        if (res.error) {
+          console.error('Login error:', res.error);
+          errEl.textContent = res.error.message || 'Email o contraseña incorrectos.';
+          errEl.hidden = false;
+        } else if (!res.data || !res.data.session) {
+          errEl.textContent = 'No se recibió sesión (¿usuario sin confirmar?).';
+          errEl.hidden = false;
+        } else {
+          try {
+            showApp(res.data.session);
+          } catch (err) {
+            console.error('showApp error:', err);
+            errEl.textContent = 'Entró, pero falló al cargar el panel: ' + (err && err.message);
+            errEl.hidden = false;
+          }
+        }
+      })
+      .catch(function (err) {
+        console.error('Login exception:', err);
+        errEl.textContent = 'Error de conexión: ' + (err && err.message);
+        errEl.hidden = false;
+      })
+      .finally(function () { btn.disabled = false; btn.textContent = 'Entrar'; });
+  });
+
+  $('#logoutBtn').addEventListener('click', function () {
+    sb.auth.signOut().then(showLogin);
+  });
+
+  // ---------- TABS ----------
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+      document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
+      tab.classList.add('active');
+      $('#tab-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ---------- STORAGE (subir imágenes) ----------
+  function uploadImage(file) {
+    var ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    var path = 'landing/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext;
+    return sb.storage.from('media').upload(path, file, { cacheControl: '3600', upsert: false })
+      .then(function (res) {
+        if (res.error) throw res.error;
+        return sb.storage.from('media').getPublicUrl(path).data.publicUrl;
+      });
+  }
+
+  // ---------- CONTENIDO ----------
+  var CONTENT_LABELS = {
+    hero_titulo: 'Título principal (hero)',
+    hero_sub: 'Subtítulo (hero)',
+    hero_gift_tagline: 'Frase de gift card (hero)',
+    hero_bg: 'Foto de fondo del hero',
+    historia_img: 'Foto de la sección historia'
+  };
+
+  function loadContenido() {
+    var wrap = $('#contenidoForm');
+    wrap.innerHTML = '<p class="hint">Cargando…</p>';
+    sb.from('site_content').select('key,value,tipo').then(function (res) {
+      if (res.error) { wrap.innerHTML = '<p class="error">No se pudo cargar el contenido.</p>'; return; }
+      var rows = res.data.sort(function (a, b) {
+        return Object.keys(CONTENT_LABELS).indexOf(a.key) - Object.keys(CONTENT_LABELS).indexOf(b.key);
+      });
+      wrap.innerHTML = '';
+      rows.forEach(function (row) { wrap.appendChild(contentCard(row)); });
+    });
+  }
+
+  function contentCard(row) {
+    var label = CONTENT_LABELS[row.key] || row.key;
+    var card = el('div', { class: 'card' });
+    card.appendChild(el('p', { class: 'card-title' }, esc(label)));
+
+    var input;
+    if (row.tipo === 'imagen') {
+      var box = el('div', { class: 'img-edit' });
+      var prev = el('img', { class: 'img-preview', src: row.value || '', alt: '' });
+      var grow = el('div', { class: 'grow' });
+      var f = el('div', { class: 'field' });
+      f.appendChild(el('label', null, 'URL de la imagen'));
+      input = el('input', { type: 'text', value: row.value || '' });
+      f.appendChild(input);
+      var fileWrap = el('div', { class: 'field' });
+      fileWrap.appendChild(el('label', null, '…o subí una foto nueva'));
+      var file = el('input', { type: 'file', accept: 'image/*' });
+      fileWrap.appendChild(file);
+      file.addEventListener('change', function () {
+        if (!file.files[0]) return;
+        input.value = 'Subiendo…';
+        uploadImage(file.files[0]).then(function (url) {
+          input.value = url; prev.src = url;
+        }).catch(function (err) {
+          input.value = row.value || '';
+          alert('No se pudo subir la imagen. ¿Creaste el bucket "media" en Supabase Storage?\n\n' + (err.message || ''));
+        });
+      });
+      input.addEventListener('input', function () { prev.src = input.value; });
+      grow.appendChild(f); grow.appendChild(fileWrap);
+      box.appendChild(prev); box.appendChild(grow);
+      card.appendChild(box);
+    } else {
+      var fld = el('div', { class: 'field' });
+      input = row.key === 'hero_titulo'
+        ? el('input', { type: 'text', value: row.value || '' })
+        : el('textarea', null);
+      if (input.tagName === 'TEXTAREA') input.value = row.value || '';
+      fld.appendChild(input);
+      card.appendChild(fld);
+      if (row.key === 'hero_titulo') {
+        card.appendChild(el('p', { class: 'hint' }, 'Tip: poné una palabra entre *asteriscos* para que salga en itálica dorada. Ej: El último *ritual* masculino.'));
+      }
+    }
+
+    var saveRow = el('div', { class: 'save-row' });
+    var btn = el('button', { class: 'save-btn' }, 'Guardar');
+    var msg = el('span', { class: 'saved-msg' }, '✓ Guardado');
+    saveRow.appendChild(btn); saveRow.appendChild(msg);
+    card.appendChild(saveRow);
+
+    btn.addEventListener('click', function () {
+      btn.disabled = true; btn.textContent = 'Guardando…';
+      sb.from('site_content').update({ value: input.value, updated_at: new Date().toISOString() })
+        .eq('key', row.key).then(function (res) {
+          btn.disabled = false; btn.textContent = 'Guardar';
+          if (res.error) { alert('Error al guardar: ' + res.error.message); return; }
+          row.value = input.value;
+          msg.classList.add('show'); setTimeout(function () { msg.classList.remove('show'); }, 1800);
+        });
+    });
+    return card;
+  }
+
+  // ---------- SERVICIOS ----------
+  var serviciosCache = [];
+  function loadServicios() {
+    var wrap = $('#serviciosForm');
+    wrap.innerHTML = '<p class="hint">Cargando…</p>';
+    sb.from('servicios').select('*').order('orden').then(function (res) {
+      if (res.error) { wrap.innerHTML = '<p class="error">No se pudieron cargar los servicios.</p>'; return; }
+      serviciosCache = res.data || [];
+      wrap.innerHTML = '';
+      serviciosCache.forEach(function (s) { wrap.appendChild(servicioCard(s)); });
+      fillGcServicioSelect();
+    });
+  }
+
+  function servicioCard(s) {
+    var card = el('div', { class: 'card' });
+    card.appendChild(el('p', { class: 'card-title' }, esc(s.nombre)));
+
+    var fNombre = field('Nombre', 'text', s.nombre);
+    var fDesc = el('div', { class: 'field' });
+    fDesc.appendChild(el('label', null, 'Descripción'));
+    var desc = el('textarea', null); desc.value = s.descripcion || '';
+    fDesc.appendChild(desc);
+
+    var row = el('div', { class: 'row' });
+    var fPrecio = field('Precio normal ($)', 'number', s.precio);
+    var fEfvo = field('Precio efectivo ($)', 'number', s.precio_efectivo);
+    var fDur = field('Duración', 'text', s.duracion);
+    row.appendChild(fPrecio.wrap); row.appendChild(fEfvo.wrap); row.appendChild(fDur.wrap);
+
+    var togWrap = el('div', { class: 'field' });
+    var tog = el('label', { class: 'toggle' });
+    var chk = el('input', { type: 'checkbox' }); if (s.activo) chk.checked = true;
+    tog.appendChild(chk); tog.appendChild(el('span', { class: 'track' }));
+    tog.appendChild(el('span', null, 'Visible en la web'));
+    togWrap.appendChild(tog);
+
+    card.appendChild(fNombre.wrap); card.appendChild(fDesc);
+    card.appendChild(row); card.appendChild(togWrap);
+
+    var saveRow = el('div', { class: 'save-row' });
+    var btn = el('button', { class: 'save-btn' }, 'Guardar');
+    var msg = el('span', { class: 'saved-msg' }, '✓ Guardado');
+    saveRow.appendChild(btn); saveRow.appendChild(msg);
+    card.appendChild(saveRow);
+
+    btn.addEventListener('click', function () {
+      btn.disabled = true; btn.textContent = 'Guardando…';
+      sb.from('servicios').update({
+        nombre: fNombre.input.value,
+        descripcion: desc.value,
+        precio: Number(fPrecio.input.value) || 0,
+        precio_efectivo: fEfvo.input.value === '' ? null : Number(fEfvo.input.value),
+        duracion: fDur.input.value,
+        activo: chk.checked,
+        updated_at: new Date().toISOString()
+      }).eq('id', s.id).then(function (res) {
+        btn.disabled = false; btn.textContent = 'Guardar';
+        if (res.error) { alert('Error al guardar: ' + res.error.message); return; }
+        msg.classList.add('show'); setTimeout(function () { msg.classList.remove('show'); }, 1800);
+      });
+    });
+    return card;
+  }
+
+  function field(label, type, value) {
+    var wrap = el('div', { class: 'field' });
+    wrap.appendChild(el('label', null, esc(label)));
+    var input = el('input', { type: type });
+    input.value = value == null ? '' : value;
+    wrap.appendChild(input);
+    return { wrap: wrap, input: input };
+  }
+
+  // ---------- CREAR GIFT CARD (cortesía / gratis) ----------
+  function fillGcServicioSelect() {
+    var sel = $('#newGcServicio');
+    if (!sel) return;
+    sel.innerHTML = '';
+    serviciosCache.forEach(function (s) {
+      var opt = el('option', { value: s.id }, esc(s.nombre) + ' — ' + fmtPrecio(s.precio));
+      sel.appendChild(opt);
+    });
+    syncGcMonto();
+  }
+  function syncGcMonto() {
+    var sel = $('#newGcServicio');
+    var s = serviciosCache.filter(function (x) { return String(x.id) === sel.value; })[0];
+    if (s) $('#newGcMonto').value = s.precio;
+  }
+
+  function genCode() {
+    var ab = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', p = function () {
+      var s = ''; for (var i = 0; i < 4; i++) s += ab[Math.floor(Math.random() * ab.length)]; return s;
+    };
+    return 'BAB-' + p() + '-' + p();
+  }
+
+  function createGiftCard(retries) {
+    var sel = $('#newGcServicio');
+    var s = serviciosCache.filter(function (x) { return String(x.id) === sel.value; })[0];
+    if (!s) { alert('Elegí un servicio.'); return; }
+    var btn = $('#newGcCreate'), ok = $('#newGcOk');
+    btn.disabled = true; btn.textContent = 'Creando…';
+    var payload = {
+      order_id: null,                       // cortesía: sin compra
+      servicio_id: s.id,
+      code: genCode(),
+      servicio_nombre: s.nombre,
+      monto: Number($('#newGcMonto').value) || 0,
+      status: 'active',
+      recipient_name: $('#newGcName').value || null,
+      recipient_email: $('#newGcEmail').value || null,
+      mensaje: $('#newGcMsg').value || null
+    };
+    sb.from('gift_cards').insert(payload).select().then(function (res) {
+      if (res.error) {
+        // 23505 = código duplicado -> reintentar con otro
+        if ((res.error.code === '23505' || /duplicate/i.test(res.error.message)) && (retries || 0) < 5) {
+          btn.disabled = false; return createGiftCard((retries || 0) + 1);
+        }
+        btn.disabled = false; btn.textContent = 'Crear gift card';
+        alert('Error al crear: ' + res.error.message + '\n\n¿Corriste el SQL del permiso de creación?');
+        return;
+      }
+      btn.disabled = false; btn.textContent = 'Crear gift card';
+      ok.textContent = '✓ Creada: ' + payload.code;
+      ok.classList.add('show');
+      loadGiftCards();
+      // Mandar el mail al destinatario (si cargaste un email)
+      if (payload.recipient_email) {
+        ok.textContent = '✓ Creada: ' + payload.code + ' · enviando mail…';
+        sendGiftCardEmail(payload).then(function (r) {
+          ok.textContent = r.ok
+            ? '✓ Creada y enviada a ' + payload.recipient_email
+            : '✓ Creada (' + payload.code + ') · ⚠ mail no enviado: ' + r.error;
+        });
+      }
+      $('#newGcName').value = ''; $('#newGcEmail').value = ''; $('#newGcMsg').value = '';
+      setTimeout(function () { ok.classList.remove('show'); }, 9000);
+    });
+  }
+
+  // Llama a la Netlify Function que manda el mail. Pasa el token de sesión
+  // para que el servidor verifique que es el dueño quien lo dispara.
+  function sendGiftCardEmail(payload) {
+    return sb.auth.getSession().then(function (res) {
+      var token = res.data.session && res.data.session.access_token;
+      return fetch('/.netlify/functions/enviar-giftcard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify(payload)
+      });
+    }).then(function (r) {
+      return r.json().then(function (d) { return { ok: r.ok, error: d && d.message }; });
+    }).catch(function (e) {
+      return { ok: false, error: 'no se pudo contactar el servidor de mail (¿estás en Netlify?)' };
+    });
+  }
+
+  document.addEventListener('change', function (e) {
+    if (e.target && e.target.id === 'newGcServicio') syncGcMonto();
+  });
+  var createBtn = $('#newGcCreate');
+  if (createBtn) createBtn.addEventListener('click', function () { createGiftCard(0); });
+
+  // ---------- GIFT CARDS ----------
+  var gcAll = [];
+  function loadGiftCards() {
+    var wrap = $('#gcTableWrap');
+    wrap.innerHTML = '<p class="hint">Cargando…</p>';
+    sb.from('gift_cards').select('*').order('created_at', { ascending: false }).then(function (res) {
+      if (res.error) { wrap.innerHTML = '<p class="error">No se pudieron cargar las gift cards.</p>'; return; }
+      gcAll = res.data || [];
+      renderGiftCards();
+    });
+  }
+
+  function renderGiftCards() {
+    var wrap = $('#gcTableWrap');
+    var q = ($('#gcSearch').value || '').toLowerCase();
+    var filter = $('#gcFilter').value;
+    var rows = gcAll.filter(function (g) {
+      if (filter && g.status !== filter) return false;
+      if (!q) return true;
+      return [g.code, g.recipient_name, g.recipient_email, g.servicio_nombre]
+        .some(function (v) { return (v || '').toLowerCase().indexOf(q) >= 0; });
+    });
+    if (!rows.length) {
+      wrap.innerHTML = '<div class="empty">No hay gift cards' + (gcAll.length ? ' que coincidan.' : ' todavía.<br>Aparecerán acá cuando alguien compre una.') + '</div>';
+      return;
+    }
+    var html = '<table><thead><tr>' +
+      '<th>Código</th><th>Servicio</th><th>Monto</th><th>Destinatario</th>' +
+      '<th>Estado</th><th>Fecha</th><th></th></tr></thead><tbody>';
+    rows.forEach(function (g) {
+      html += '<tr>' +
+        '<td><span class="code">' + esc(g.code) + '</span></td>' +
+        '<td>' + esc(g.servicio_nombre) + '</td>' +
+        '<td>' + fmtPrecio(g.monto) + '</td>' +
+        '<td>' + esc(g.recipient_name || '—') + (g.recipient_email ? '<br><small style="color:var(--ink-dim)">' + esc(g.recipient_email) + '</small>' : '') + '</td>' +
+        '<td>' + statusBadge(g.status) + '</td>' +
+        '<td>' + fmtFecha(g.created_at) + '</td>' +
+        '<td>' + (g.status === 'active' ? '<button class="mini-btn" data-redeem="' + esc(g.id) + '">Marcar canjeada</button>' : '') + '</td>' +
+        '</tr>';
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+    wrap.querySelectorAll('[data-redeem]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (!confirm('¿Marcar esta gift card como canjeada? No se puede deshacer fácilmente.')) return;
+        redeem(b.dataset.redeem, function () { loadGiftCards(); });
+      });
+    });
+  }
+
+  function statusBadge(s) {
+    var map = { active: 'Activa', redeemed: 'Canjeada', pending: 'Pendiente de pago', expired: 'Vencida' };
+    return '<span class="badge ' + s + '">' + (map[s] || s) + '</span>';
+  }
+
+  function redeem(id, done) {
+    sb.from('gift_cards').update({ status: 'redeemed', redeemed_at: new Date().toISOString() })
+      .eq('id', id).then(function (res) {
+        if (res.error) { alert('Error: ' + res.error.message); return; }
+        if (done) done();
+      });
+  }
+
+  $('#gcSearch').addEventListener('input', renderGiftCards);
+  $('#gcFilter').addEventListener('change', renderGiftCards);
+  $('#gcReload').addEventListener('click', loadGiftCards);
+
+  // ---------- VALIDAR CÓDIGO ----------
+  $('#validarForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var code = ($('#codeInput').value || '').trim().toUpperCase();
+    var out = $('#validarResult');
+    if (!code) return;
+    out.innerHTML = '<p class="hint">Buscando…</p>';
+    sb.from('gift_cards').select('*').eq('code', code).maybeSingle().then(function (res) {
+      if (res.error) { out.innerHTML = '<p class="error">Error al buscar.</p>'; return; }
+      var g = res.data;
+      if (!g) { out.innerHTML = '<div class="gc-result"><p class="error">No existe ninguna gift card con ese código.</p></div>'; return; }
+      renderValidar(g);
+    });
+  });
+
+  function renderValidar(g) {
+    var out = $('#validarResult');
+    var cls = g.status === 'active' ? 'ok' : 'used';
+    var box = el('div', { class: 'gc-result ' + cls });
+    box.innerHTML =
+      '<h3>' + esc(g.servicio_nombre) + '</h3>' +
+      '<p class="gc-meta">Código: <span class="code">' + esc(g.code) + '</span></p>' +
+      '<p class="gc-meta">Valor: ' + fmtPrecio(g.monto) + '</p>' +
+      '<p class="gc-meta">Para: ' + esc(g.recipient_name || '—') + '</p>' +
+      '<p class="gc-big">Estado: ' + statusBadge(g.status) +
+        (g.status === 'redeemed' ? ' <small style="color:var(--ink-dim)">el ' + fmtFecha(g.redeemed_at) + '</small>' : '') +
+      '</p>';
+    if (g.status === 'active') {
+      var btn = el('button', { class: 'save-btn' }, 'Marcar como canjeada');
+      btn.addEventListener('click', function () {
+        btn.disabled = true; btn.textContent = 'Procesando…';
+        redeem(g.id, function () {
+          g.status = 'redeemed'; g.redeemed_at = new Date().toISOString();
+          renderValidar(g); loadGiftCards();
+        });
+      });
+      box.appendChild(btn);
+    } else if (g.status === 'pending') {
+      box.appendChild(el('p', { class: 'notice' }, '⏳ Pago no confirmado todavía. Esta gift card aún no es válida.'));
+    } else {
+      box.appendChild(el('p', { class: 'notice' }, '⚠ Esta gift card ya fue utilizada.'));
+    }
+    out.innerHTML = '';
+    out.appendChild(box);
+  }
+
+  // ---------- INIT ----------
+  sb.auth.getSession().then(function (res) {
+    if (res.data.session) showApp(res.data.session);
+    else showLogin();
+  });
+})();
