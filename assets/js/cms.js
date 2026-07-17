@@ -93,10 +93,31 @@
     });
   }
 
+  // ---- 3) Equipo (tabla barberos) ----
+  // Si la tabla existe y tiene filas, re-renderiza la grilla del equipo.
+  // Si no (error, vacía o tabla inexistente), quedan los 7 del HTML.
+  function escHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function applyBarberos(rows) {
+    if (!Array.isArray(rows) || rows.length === 0) return;
+    var grid = document.querySelector('.team-grid');
+    if (!grid) return;
+    grid.innerHTML = rows.map(function (b) {
+      return '<article class="barber">' +
+        '<div class="barber-img"><img src="' + escHtml(b.foto_url || '') + '" alt="' + escHtml(b.nombre) + '" /></div>' +
+        '<h3>' + escHtml(b.nombre) + '</h3><p>' + escHtml(b.rol || 'Barbero') + '</p>' +
+        '</article>';
+    }).join('');
+  }
+
   function run() {
     rest('site_content?select=key,value,tipo').then(applyContent);
     rest('servicios?select=slug,precio,precio_efectivo,duracion&activo=eq.true&order=orden')
       .then(applyServicios);
+    rest('barberos?select=nombre,rol,foto_url&activo=eq.true&order=orden')
+      .then(applyBarberos);
   }
 
   if (document.readyState === 'loading') {

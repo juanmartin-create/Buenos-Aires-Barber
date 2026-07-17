@@ -3,8 +3,19 @@
  * Fallback: Resend (si no hay credenciales de Gmail configuradas).
  * La usan tanto la creación de cortesía como el webhook de Mercado Pago. */
 
-const GMAIL_USER = process.env.GMAIL_USER;               // ej: bsasbarbershop@gmail.com
+// Opción 1 (preferida): SMTP genérico — sirve para info@bsasbarbershop.com
+// tanto si está en Google Workspace (smtp.gmail.com) como en un hosting (cPanel, DonWeb, etc.)
+const SMTP_HOST = process.env.SMTP_HOST;                   // ej: smtp.gmail.com o mail.bsasbarbershop.com
+const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
+const SMTP_USER = process.env.SMTP_USER;                   // ej: info@bsasbarbershop.com
+const SMTP_PASS = process.env.SMTP_PASS;
+const SMTP_FROM = process.env.SMTP_FROM;                   // opcional: 'Buenos Aires Barbershop <info@...>'
+
+// Opción 2: cuenta de Gmail común con contraseña de aplicación
+const GMAIL_USER = process.env.GMAIL_USER;                 // ej: bsasbarbershop@gmail.com
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD; // contraseña de aplicación (16 caracteres)
+
+// Opción 3 (fallback): Resend
 const RESEND_KEY = process.env.RESEND_API_KEY;
 const FROM = process.env.RESEND_FROM || 'Buenos Aires Barbershop <onboarding@resend.dev>';
 
@@ -42,6 +53,22 @@ function buildEmail(g) {
 
 const SUBJECT = 'Tu Gift Card de Buenos Aires Barbershop 🎁';
 
+async function sendViaSmtp(g) {
+  const nodemailer = require('nodemailer');
+  var transporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_PORT === 465,
+    auth: { user: SMTP_USER, pass: SMTP_PASS }
+  });
+  return transporter.sendMail({
+    from: SMTP_FROM || ('"Buenos Aires Barbershop" <' + SMTP_USER + '>'),
+    to: g.recipient_email,
+    subject: SUBJECT,
+    html: buildEmail(g)
+  });
+}
+
 async function sendViaGmail(g) {
   const nodemailer = require('nodemailer');
   var transporter = nodemailer.createTransport({
@@ -73,9 +100,10 @@ async function sendViaResend(g) {
 }
 
 async function sendGiftCardEmail(g) {
+  if (SMTP_HOST && SMTP_USER && SMTP_PASS) return sendViaSmtp(g);
   if (GMAIL_USER && GMAIL_APP_PASSWORD) return sendViaGmail(g);
   if (RESEND_KEY) return sendViaResend(g);
-  throw new Error('Falta configurar el envío de emails: GMAIL_USER + GMAIL_APP_PASSWORD (o RESEND_API_KEY)');
+  throw new Error('Falta configurar el envío de emails: SMTP_HOST/SMTP_USER/SMTP_PASS (o GMAIL_USER + GMAIL_APP_PASSWORD, o RESEND_API_KEY)');
 }
 
 module.exports = { sendGiftCardEmail, buildEmail, fmtPrecio, escapeHtml };

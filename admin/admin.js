@@ -41,6 +41,7 @@
     $('#userEmail').textContent = session.user.email;
     loadContenido();
     loadServicios();
+    loadBarberos();
     loadGiftCards();
   }
   function showLogin() {
@@ -264,6 +265,138 @@
     wrap.appendChild(input);
     return { wrap: wrap, input: input };
   }
+
+  // ---------- EQUIPO (barberos) ----------
+  var barberosCache = [];
+  function loadBarberos() {
+    var wrap = $('#barberosForm');
+    if (!wrap) return;
+    wrap.innerHTML = '<p class="hint">Cargando…</p>';
+    sb.from('barberos').select('*').order('orden').then(function (res) {
+      if (res.error) {
+        wrap.innerHTML = '<p class="error">No se pudo cargar el equipo. ¿Corriste el SQL de la tabla "barberos"? (supabase-barberos.sql)</p>';
+        return;
+      }
+      barberosCache = res.data || [];
+      wrap.innerHTML = barberosCache.length ? '' : '<div class="empty">Todavía no hay barberos cargados.</div>';
+      barberosCache.forEach(function (b) { wrap.appendChild(barberoCard(b)); });
+    });
+  }
+
+  function barberoCard(b) {
+    var card = el('div', { class: 'card' });
+    card.appendChild(el('p', { class: 'card-title' }, esc(b.nombre) + (b.activo ? '' : ' <small style="color:var(--ink-dim)">(oculto)</small>')));
+
+    var box = el('div', { class: 'img-edit' });
+    var prev = el('img', { class: 'img-preview', src: b.foto_url || '', alt: '' });
+    var grow = el('div', { class: 'grow' });
+
+    var fNombre = field('Nombre', 'text', b.nombre);
+    var fRol = field('Rol', 'text', b.rol);
+    var fOrden = field('Orden', 'number', b.orden);
+    var row = el('div', { class: 'row' });
+    row.appendChild(fNombre.wrap); row.appendChild(fRol.wrap); row.appendChild(fOrden.wrap);
+
+    var fUrl = el('div', { class: 'field' });
+    fUrl.appendChild(el('label', null, 'URL de la foto'));
+    var url = el('input', { type: 'text', value: b.foto_url || '' });
+    fUrl.appendChild(url);
+    url.addEventListener('input', function () { prev.src = url.value; });
+
+    var fFile = el('div', { class: 'field' });
+    fFile.appendChild(el('label', null, '…o subí una foto nueva'));
+    var file = el('input', { type: 'file', accept: 'image/*' });
+    fFile.appendChild(file);
+    file.addEventListener('change', function () {
+      if (!file.files[0]) return;
+      url.value = 'Subiendo…';
+      uploadImage(file.files[0]).then(function (u) { url.value = u; prev.src = u; })
+        .catch(function (err) {
+          url.value = b.foto_url || '';
+          alert('No se pudo subir la foto: ' + (err.message || ''));
+        });
+    });
+
+    grow.appendChild(row); grow.appendChild(fUrl); grow.appendChild(fFile);
+    box.appendChild(prev); box.appendChild(grow);
+    card.appendChild(box);
+
+    var togWrap = el('div', { class: 'field' });
+    var tog = el('label', { class: 'toggle' });
+    var chk = el('input', { type: 'checkbox' }); if (b.activo) chk.checked = true;
+    tog.appendChild(chk); tog.appendChild(el('span', { class: 'track' }));
+    tog.appendChild(el('span', null, 'Visible en la web'));
+    togWrap.appendChild(tog);
+    card.appendChild(togWrap);
+
+    var saveRow = el('div', { class: 'save-row' });
+    var btn = el('button', { class: 'save-btn' }, 'Guardar');
+    var msg = el('span', { class: 'saved-msg' }, '✓ Guardado');
+    var del = el('button', { class: 'mini-btn', style: 'margin-left:auto' }, 'Eliminar');
+    saveRow.appendChild(btn); saveRow.appendChild(msg); saveRow.appendChild(del);
+    card.appendChild(saveRow);
+
+    btn.addEventListener('click', function () {
+      btn.disabled = true; btn.textContent = 'Guardando…';
+      sb.from('barberos').update({
+        nombre: fNombre.input.value.trim(),
+        rol: fRol.input.value.trim() || 'Barbero',
+        foto_url: url.value.trim() || null,
+        orden: Number(fOrden.input.value) || 0,
+        activo: chk.checked,
+        updated_at: new Date().toISOString()
+      }).eq('id', b.id).then(function (res) {
+        btn.disabled = false; btn.textContent = 'Guardar';
+        if (res.error) { alert('Error al guardar: ' + res.error.message); return; }
+        msg.classList.add('show'); setTimeout(function () { msg.classList.remove('show'); }, 1800);
+      });
+    });
+
+    del.addEventListener('click', function () {
+      if (!confirm('¿Eliminar a ' + b.nombre + ' del equipo? Esta acción no se puede deshacer.\n\nTip: si es algo temporal, destildá "Visible en la web" en vez de eliminar.')) return;
+      del.disabled = true; del.textContent = 'Eliminando…';
+      sb.from('barberos').delete().eq('id', b.id).then(function (res) {
+        if (res.error) { del.disabled = false; del.textContent = 'Eliminar'; alert('Error: ' + res.error.message); return; }
+        loadBarberos();
+      });
+    });
+
+    return card;
+  }
+
+  var newBarberoBtn = $('#newBarberoCreate');
+  if (newBarberoBtn) newBarberoBtn.addEventListener('click', function () {
+    var nombre = ($('#newBarberoNombre').value || '').trim();
+    if (!nombre) { alert('Poné el nombre del barbero.'); return; }
+    var ok = $('#newBarberoOk');
+    var fileInput = $('#newBarberoFoto');
+    newBarberoBtn.disabled = true; newBarberoBtn.textContent = 'Agregando…';
+
+    var fotoPromise = (fileInput.files && fileInput.files[0])
+      ? uploadImage(fileInput.files[0])
+      : Promise.resolve(null);
+
+    fotoPromise.then(function (fotoUrl) {
+      var maxOrden = barberosCache.reduce(function (m, x) { return Math.max(m, x.orden || 0); }, 0);
+      return sb.from('barberos').insert({
+        nombre: nombre,
+        rol: ($('#newBarberoRol').value || '').trim() || 'Barbero',
+        foto_url: fotoUrl,
+        orden: maxOrden + 1,
+        activo: true
+      });
+    }).then(function (res) {
+      newBarberoBtn.disabled = false; newBarberoBtn.textContent = 'Agregar barbero';
+      if (res.error) { alert('Error al agregar: ' + res.error.message + '\n\n¿Corriste el SQL de la tabla "barberos"?'); return; }
+      ok.textContent = '✓ ' + nombre + ' agregado';
+      ok.classList.add('show'); setTimeout(function () { ok.classList.remove('show'); }, 4000);
+      $('#newBarberoNombre').value = ''; $('#newBarberoRol').value = 'Barbero'; fileInput.value = '';
+      loadBarberos();
+    }).catch(function (err) {
+      newBarberoBtn.disabled = false; newBarberoBtn.textContent = 'Agregar barbero';
+      alert('No se pudo subir la foto: ' + (err.message || ''));
+    });
+  });
 
   // ---------- CREAR GIFT CARD (cortesía / gratis) ----------
   function fillGcServicioSelect() {

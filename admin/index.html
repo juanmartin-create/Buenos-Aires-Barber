@@ -38,6 +38,7 @@
   <nav class="tabs">
     <button class="tab active" data-tab="contenido">Contenido</button>
     <button class="tab" data-tab="servicios">Precios y servicios</button>
+    <button class="tab" data-tab="equipo">Equipo</button>
     <button class="tab" data-tab="giftcards">Gift Cards</button>
     <button class="tab" data-tab="validar">Validar código</button>
   </nav>
@@ -55,6 +56,29 @@
       <h2>Precios y servicios</h2>
       <p class="hint">Estos precios se muestran en la landing y se usan para las gift cards. Una sola fuente.</p>
       <div id="serviciosForm" class="cards"></div>
+    </section>
+
+    <!-- EQUIPO -->
+    <section id="tab-equipo" class="panel">
+      <h2>Equipo</h2>
+      <p class="hint">Agregá, editá o quitá barberos. Los cambios se ven en la web al recargar. Podés subir la foto directamente.</p>
+
+      <details class="create-gc">
+        <summary>＋ Agregar barbero</summary>
+        <div class="card">
+          <div class="row">
+            <div class="field"><label>Nombre</label><input id="newBarberoNombre" type="text" placeholder="Ej: Facundo" /></div>
+            <div class="field"><label>Rol</label><input id="newBarberoRol" type="text" value="Barbero" /></div>
+          </div>
+          <div class="field"><label>Foto (se sube al guardar)</label><input id="newBarberoFoto" type="file" accept="image/*" /></div>
+          <div class="save-row">
+            <button id="newBarberoCreate" class="save-btn">Agregar barbero</button>
+            <span id="newBarberoOk" class="saved-msg"></span>
+          </div>
+        </div>
+      </details>
+
+      <div id="barberosForm" class="cards"></div>
     </section>
 
     <!-- GIFT CARDS -->
