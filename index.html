@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Buenos Aires Barbershop — El último ritual</title>
 <meta name="description" content="Barbería clásica de Buenos Aires. Cortes, barba y afeitado en una atmósfera de tradición y artesanía. Reserva tu turno." />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="assets/img/logo/sello-cobre.png">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -15,6 +13,7 @@
 <!-- Loader -->
 <div class="loader" id="loader">
   <div class="loader-inner">
+    <img class="loader-mark" src="assets/img/logo/sello-blanco.png" alt="" />
     <span class="loader-line"></span>
     <span class="loader-text">Buenos Aires Barbershop</span>
   </div>
@@ -24,7 +23,7 @@
 <header class="nav" id="nav">
   <div class="nav-inner">
     <a href="#hero" class="nav-logo">
-      <img src="assets/img/logo/logo_chico.png" alt="Buenos Aires Barbershop" />
+      <img src="assets/img/logo/logo-horizontal-blanco.png" alt="Buenos Aires Barbershop" />
     </a>
     <nav class="nav-links">
       <a href="#barberia">La Barbería</a>
@@ -34,7 +33,7 @@
       <a href="Gift Card.html" class="nav-gift">Gift Card</a>
       <a href="#contacto">Contacto</a>
     </nav>
-    <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="nav-cta">Reservar</a>
+    <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="nav-cta" data-booksy>Reservar</a>
     <button class="nav-burger" id="navBurger" aria-label="Menú">
       <span></span><span></span><span></span>
     </button>
@@ -50,20 +49,20 @@
     <a href="#prensa">Prensa</a>
     <a href="Gift Card.html">Gift Card · Experiencia</a>
     <a href="#contacto">Contacto</a>
-    <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="mobile-cta">Reservar turno</a>
+    <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="mobile-cta" data-booksy>Reservar turno</a>
   </nav>
 </div>
 
 <!-- HERO -->
 <section class="hero" id="hero">
   <div class="hero-bg">
-    <img src="assets/img/barberia-interior.jpg" alt="" data-cms="hero_bg" />
+    <img src="assets/img/hero-fachada.jpg" alt="" data-cms="hero_bg" />
     <div class="hero-overlay"></div>
   </div>
-  <canvas id="heroCanvas" class="hero-canvas"></canvas>
 
   <div class="hero-content">
-    <p class="hero-eyebrow"><span class="line"></span> EST. BUENOS AIRES</p>
+    <img class="hero-brand" src="assets/img/logo/logo-ornamental-color-neg.png" alt="Buenos Aires Barbershop" />
+    <p class="hero-eyebrow"><span class="line"></span> EST. BUENOS AIRES <span class="line"></span></p>
     <h1 class="hero-title" data-cms="hero_titulo" data-cms-default="El último *ritual* masculino.">
       <span class="word">El</span>
       <span class="word">último</span>
@@ -322,17 +321,17 @@
 
   <div class="prensa-carousel" id="prensaCarousel">
     <div class="prensa-track">
-      <div class="prensa-card"><img src="assets/img/prensa/prensa-1.jpg" alt="La Nación"/></div>
-      <div class="prensa-card"><img src="assets/img/prensa/prensa-2.jpg" alt="La Nación"/></div>
-      <div class="prensa-card"><img src="assets/img/prensa/prensa-3.jpg" alt="El Intransigente"/></div>
-      <div class="prensa-card"><img src="assets/img/prensa/prensa-4.jpg" alt="Clarín"/></div>
-      <div class="prensa-card"><img src="assets/img/prensa/prensa-5.jpg" alt="Artero Entrevista"/></div>
+      <a class="prensa-card" href="https://www.lanacion.com.ar/lifestyle/el-universo-detras-de-las-barbas-y-los-barbudos-nid2140846" target="_blank" rel="noopener"><img src="assets/img/prensa/prensa-1.jpg" alt="La Nación"/></a>
+      <a class="prensa-card" href="https://www.lanacion.com.ar/lifestyle/el-universo-detras-de-las-barbas-y-los-barbudos-nid2140846" target="_blank" rel="noopener"><img src="assets/img/prensa/prensa-2.jpg" alt="La Nación"/></a>
+      <a class="prensa-card" href="https://elintransigente.com/espectaculo/2019/08/03/the-barber-job-salon-berlin-bacan-y-otras-barberias-exclusivas-para-un-cambio-de-look/" target="_blank" rel="noopener"><img src="assets/img/prensa/prensa-3.jpg" alt="El Intransigente"/></a>
+      <a class="prensa-card" href="https://www.clarin.com/zonales/barberia-olivos-supero-concurso-mejores-mundo_0_mLfYw-83b.html" target="_blank" rel="noopener"><img src="assets/img/prensa/prensa-4.jpg" alt="Clarín"/></a>
+      <a class="prensa-card" href="https://arteropeluqueriablog.com/diego-izzo/" target="_blank" rel="noopener"><img src="assets/img/prensa/prensa-5.jpg" alt="Artero Entrevista"/></a>
       <!-- duplicado para loop infinito -->
-      <div class="prensa-card"><img src="assets/img/prensa/prensa-1.jpg" alt=""/></div>
-      <div class="prensa-card"><img src="assets/img/prensa/prensa-2.jpg" alt=""/></div>
-      <div class="prensa-card"><img src="assets/img/prensa/prensa-3.jpg" alt=""/></div>
-      <div class="prensa-card"><img src="assets/img/prensa/prensa-4.jpg" alt=""/></div>
-      <div class="prensa-card"><img src="assets/img/prensa/prensa-5.jpg" alt=""/></div>
+      <a class="prensa-card" href="https://www.lanacion.com.ar/lifestyle/el-universo-detras-de-las-barbas-y-los-barbudos-nid2140846" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img src="assets/img/prensa/prensa-1.jpg" alt=""/></a>
+      <a class="prensa-card" href="https://www.lanacion.com.ar/lifestyle/el-universo-detras-de-las-barbas-y-los-barbudos-nid2140846" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img src="assets/img/prensa/prensa-2.jpg" alt=""/></a>
+      <a class="prensa-card" href="https://elintransigente.com/espectaculo/2019/08/03/the-barber-job-salon-berlin-bacan-y-otras-barberias-exclusivas-para-un-cambio-de-look/" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img src="assets/img/prensa/prensa-3.jpg" alt=""/></a>
+      <a class="prensa-card" href="https://www.clarin.com/zonales/barberia-olivos-supero-concurso-mejores-mundo_0_mLfYw-83b.html" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img src="assets/img/prensa/prensa-4.jpg" alt=""/></a>
+      <a class="prensa-card" href="https://arteropeluqueriablog.com/diego-izzo/" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img src="assets/img/prensa/prensa-5.jpg" alt=""/></a>
     </div>
   </div>
 </section>
@@ -422,7 +421,7 @@
         <li><span>Instagram</span><p><a href="https://instagram.com/buenosairesbarbershop" target="_blank" rel="noopener">@buenosairesbarbershop</a></p></li>
       </ul>
 
-      <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="btn btn-neon reveal">
+      <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="btn btn-neon reveal" id="reservaBooksy">
         <span class="btn-neon-glow" aria-hidden="true"></span>
         <span class="btn-neon-label">Reservar en Booksy</span>
         <svg class="btn-neon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
@@ -439,7 +438,7 @@
 <footer class="footer">
   <div class="container footer-inner">
     <div class="footer-brand">
-      <img src="assets/img/logo/logo_grande_3_blano.png" alt="Buenos Aires Barbershop"/>
+      <img src="assets/img/logo/logo-principal-color-neg.png" alt="Buenos Aires Barbershop"/>
       <p>El último ritual masculino.</p>
     </div>
 
@@ -481,10 +480,9 @@
   </span>
 </a>
 
-<!-- three.js + GSAP via CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<!-- GSAP via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="script.js"></script>
 
 <!-- CMS: lee de Supabase y reemplaza textos/precios/imágenes si el dueño los cambió -->

@@ -1,0 +1,7 @@
+{
+  "name": "buenos-aires-barber",
+  "private": true,
+  "dependencies": {
+    "nodemailer": "^6.9.13"
+  }
+}

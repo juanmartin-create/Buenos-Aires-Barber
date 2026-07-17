@@ -50,9 +50,16 @@ document.addEventListener('DOMContentLoaded', () => {
   setupLightbox();
   setupImageFallbacks();
 
-  // ----- three.js scenes -----
-  initHeroScene();
-  initQuoteScene();
+  // ----- Recalcular posiciones de ScrollTrigger cuando el layout se asienta.
+  // Las fuentes autohosteadas y las imágenes cargan después de DOMContentLoaded;
+  // sin este refresh, el pin del feed queda corrido y "persigue" al usuario.
+  if (window.ScrollTrigger) {
+    window.addEventListener('load', () => ScrollTrigger.refresh());
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => ScrollTrigger.refresh());
+    }
+  }
+
 });
 
 /* ---------- Ambient neon glow behind imagery ---------- */
@@ -108,8 +115,10 @@ function setupClientesFeed() {
     start: 'top top',
     end: () => '+=' + (window.innerHeight * n),
     pin: pin,
+    pinSpacing: true,
     scrub: true,
     anticipatePin: 1,
+    fastScrollEnd: true,
     invalidateOnRefresh: true,
     onUpdate: self => {
       const p = self.progress * (n - 1); // 0 .. n-1
@@ -315,170 +324,18 @@ function setupImageMasks() {
     );
   });
 }
-
-/* =========================================================
-   THREE.JS — Hero: gold particles + slow rotating dust
-   ========================================================= */
-function initHeroScene() {
-  const canvas = document.getElementById('heroCanvas');
-  if (!canvas || !window.THREE) return;
-
-  const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x0a0908, 0.02);
-
-  const camera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-  camera.position.z = 50;
-
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
-
-  // -- Gold dust particle field
-  const particleCount = 1400;
-  const positions = new Float32Array(particleCount * 3);
-  const sizes = new Float32Array(particleCount);
-  for (let i = 0; i < particleCount; i++) {
-    positions[i * 3]     = (Math.random() - 0.5) * 140;
-    positions[i * 3 + 1] = (Math.random() - 0.5) * 80;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 80;
-    sizes[i] = Math.random() * 1.4 + 0.2;
-  }
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-
-  // Custom soft glowing particle material
-  const tex = makeParticleTexture();
-  const material = new THREE.PointsMaterial({
-    color: 0xc9a96a,
-    size: 0.6,
-    map: tex,
-    transparent: true,
-    opacity: 0.7,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    sizeAttenuation: true
-  });
-
-  const particles = new THREE.Points(geometry, material);
-  scene.add(particles);
-
-  // -- Mouse parallax
-  const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
-  window.addEventListener('mousemove', e => {
-    mouse.tx = (e.clientX / window.innerWidth - 0.5) * 2;
-    mouse.ty = (e.clientY / window.innerHeight - 0.5) * 2;
-  });
-
-  // -- Scroll-driven camera zoom-out
-  if (window.ScrollTrigger) {
-    ScrollTrigger.create({
-      trigger: '.hero',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: true,
-      onUpdate: self => {
-        camera.position.z = 50 + self.progress * 40;
-        particles.material.opacity = 0.7 - self.progress * 0.6;
+/* ---------- Reserva Booksy embebida (modal in-page, sin redirigir) ---------- */
+(function () {
+  const triggers = document.querySelectorAll('#reservaBooksy, [data-booksy]');
+  if (!triggers.length) return;
+  triggers.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const widgetBtn = document.querySelector('.booksy-widget-button');
+      if (widgetBtn) {
+        e.preventDefault();
+        widgetBtn.click();
       }
+      // Si el widget de Booksy no cargó, el href abre Booksy en otra pestaña como fallback
     });
-  }
-
-  // -- Resize
-  function onResize() {
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
-  window.addEventListener('resize', onResize);
-  onResize();
-
-  // -- Animate
-  const clock = new THREE.Clock();
-  function tick() {
-    const t = clock.getElapsedTime();
-    mouse.x += (mouse.tx - mouse.x) * 0.04;
-    mouse.y += (mouse.ty - mouse.y) * 0.04;
-
-    particles.rotation.y = t * 0.04 + mouse.x * 0.2;
-    particles.rotation.x = mouse.y * 0.15;
-
-    renderer.render(scene, camera);
-    requestAnimationFrame(tick);
-  }
-  tick();
-}
-
-/* =========================================================
-   THREE.JS — Pullquote: floating dark waves
-   ========================================================= */
-function initQuoteScene() {
-  const canvas = document.getElementById('quoteCanvas');
-  if (!canvas || !window.THREE) return;
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-  camera.position.set(0, 8, 25);
-  camera.lookAt(0, 0, 0);
-
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
-
-  // Wireframe wave plane
-  const planeGeom = new THREE.PlaneGeometry(60, 60, 60, 60);
-  const planeMat = new THREE.MeshBasicMaterial({
-    color: 0xc9a96a, wireframe: true, transparent: true, opacity: 0.18
   });
-  const plane = new THREE.Mesh(planeGeom, planeMat);
-  plane.rotation.x = -Math.PI / 2.2;
-  plane.position.y = -6;
-  scene.add(plane);
-
-  const posAttr = planeGeom.attributes.position;
-  const originalZ = new Float32Array(posAttr.count);
-  for (let i = 0; i < posAttr.count; i++) originalZ[i] = posAttr.getZ(i);
-
-  function onResize() {
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
-  window.addEventListener('resize', onResize);
-  onResize();
-
-  const clock = new THREE.Clock();
-  function tick() {
-    const t = clock.getElapsedTime();
-    for (let i = 0; i < posAttr.count; i++) {
-      const x = posAttr.getX(i);
-      const y = posAttr.getY(i);
-      const wave = Math.sin(x * 0.25 + t) * 0.8 + Math.cos(y * 0.25 + t * 0.8) * 0.8;
-      posAttr.setZ(i, originalZ[i] + wave);
-    }
-    posAttr.needsUpdate = true;
-    plane.rotation.z = t * 0.02;
-    renderer.render(scene, camera);
-    requestAnimationFrame(tick);
-  }
-  tick();
-}
-
-/* ---------- Particle texture helper ---------- */
-function makeParticleTexture() {
-  const size = 64;
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = size;
-  const ctx = canvas.getContext('2d');
-  const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-  grad.addColorStop(0, 'rgba(255, 220, 150, 1)');
-  grad.addColorStop(0.3, 'rgba(201, 169, 106, 0.6)');
-  grad.addColorStop(1, 'rgba(201, 169, 106, 0)');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, size, size);
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.needsUpdate = true;
-  return tex;
-}
+})();

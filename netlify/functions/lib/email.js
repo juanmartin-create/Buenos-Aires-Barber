@@ -1,6 +1,10 @@
-/* Librería compartida: arma y envía el email de la gift card con Resend.
+/* Librería compartida: arma y envía el email de la gift card.
+ * Prioridad: Gmail SMTP (sale desde la casilla real de la barbería).
+ * Fallback: Resend (si no hay credenciales de Gmail configuradas).
  * La usan tanto la creación de cortesía como el webhook de Mercado Pago. */
 
+const GMAIL_USER = process.env.GMAIL_USER;               // ej: bsasbarbershop@gmail.com
+const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD; // contraseña de aplicación (16 caracteres)
 const RESEND_KEY = process.env.RESEND_API_KEY;
 const FROM = process.env.RESEND_FROM || 'Buenos Aires Barbershop <onboarding@resend.dev>';
 
@@ -36,21 +40,42 @@ function buildEmail(g) {
   ].join('');
 }
 
-async function sendGiftCardEmail(g) {
-  if (!RESEND_KEY) throw new Error('Falta configurar RESEND_API_KEY en el servidor');
+const SUBJECT = 'Tu Gift Card de Buenos Aires Barbershop 🎁';
+
+async function sendViaGmail(g) {
+  const nodemailer = require('nodemailer');
+  var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user: GMAIL_USER, pass: GMAIL_APP_PASSWORD }
+  });
+  return transporter.sendMail({
+    from: '"Buenos Aires Barbershop" <' + GMAIL_USER + '>',
+    to: g.recipient_email,
+    subject: SUBJECT,
+    html: buildEmail(g)
+  });
+}
+
+async function sendViaResend(g) {
   var r = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: 'Bearer ' + RESEND_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       from: FROM,
       to: g.recipient_email,
-      subject: 'Tu Gift Card de Buenos Aires Barbershop 🎁',
+      subject: SUBJECT,
       html: buildEmail(g)
     })
   });
   var data = await r.json();
   if (!r.ok) throw new Error('Resend: ' + (data.message || JSON.stringify(data)));
   return data;
+}
+
+async function sendGiftCardEmail(g) {
+  if (GMAIL_USER && GMAIL_APP_PASSWORD) return sendViaGmail(g);
+  if (RESEND_KEY) return sendViaResend(g);
+  throw new Error('Falta configurar el envío de emails: GMAIL_USER + GMAIL_APP_PASSWORD (o RESEND_API_KEY)');
 }
 
 module.exports = { sendGiftCardEmail, buildEmail, fmtPrecio, escapeHtml };
