@@ -324,6 +324,43 @@ function setupImageMasks() {
     );
   });
 }
+/* ---------- Música ambiente (la canción del sitio original) ---------- */
+(function () {
+  var fab = document.getElementById('musicFab');
+  var audio = document.getElementById('bgMusic');
+  if (!fab || !audio) return;
+  audio.volume = 0.35;
+
+  function set(on) {
+    fab.classList.toggle('playing', on);
+    fab.setAttribute('aria-pressed', on ? 'true' : 'false');
+    try { localStorage.setItem('bab-music', on ? '1' : '0'); } catch (e) {}
+  }
+
+  fab.addEventListener('click', function () {
+    if (audio.paused) {
+      audio.play().then(function () { set(true); }).catch(function () {});
+    } else {
+      audio.pause();
+      set(false);
+    }
+  });
+
+  // Si en la visita anterior dejó la música sonando, se reanuda en la
+  // primera interacción (los navegadores bloquean el autoplay con sonido).
+  var wanted = false;
+  try { wanted = localStorage.getItem('bab-music') === '1'; } catch (e) {}
+  if (wanted) {
+    var once = function () {
+      audio.play().then(function () { set(true); }).catch(function () {});
+      window.removeEventListener('pointerdown', once);
+      window.removeEventListener('keydown', once);
+    };
+    window.addEventListener('pointerdown', once);
+    window.addEventListener('keydown', once);
+  }
+})();
+
 /* ---------- Reserva Booksy embebida (modal in-page, sin redirigir) ---------- */
 (function () {
   const triggers = document.querySelectorAll('#reservaBooksy, [data-booksy]');
