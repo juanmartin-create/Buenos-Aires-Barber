@@ -346,18 +346,20 @@ function setupImageMasks() {
     }
   });
 
-  // Si en la visita anterior dejó la música sonando, se reanuda en la
-  // primera interacción (los navegadores bloquean el autoplay con sonido).
-  var wanted = false;
-  try { wanted = localStorage.getItem('bab-music') === '1'; } catch (e) {}
-  if (wanted) {
-    var once = function () {
+  // "Autoplay": los navegadores bloquean el sonido automático, así que la
+  // música arranca sola en la PRIMERA interacción del visitante (clic, tap,
+  // tecla o scroll). Solo se respeta el apagado si él mismo la pausó antes.
+  var optedOut = false;
+  try { optedOut = localStorage.getItem('bab-music') === '0'; } catch (e) {}
+  if (!optedOut) {
+    var evs = ['pointerdown', 'touchend', 'keydown', 'wheel'];
+    var once = function (e) {
+      evs.forEach(function (ev) { window.removeEventListener(ev, once); });
+      // si la primera interacción fue sobre el propio botón, lo maneja su click
+      if (e && e.target && fab.contains(e.target)) return;
       audio.play().then(function () { set(true); }).catch(function () {});
-      window.removeEventListener('pointerdown', once);
-      window.removeEventListener('keydown', once);
     };
-    window.addEventListener('pointerdown', once);
-    window.addEventListener('keydown', once);
+    evs.forEach(function (ev) { window.addEventListener(ev, once, { passive: true }); });
   }
 })();
 
