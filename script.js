@@ -199,6 +199,9 @@ function setupImageFallbacks() {
     if (wrap) wrap.classList.add('img-failed');
   };
   document.querySelectorAll('img').forEach(img => {
+    // Ignorar imágenes que se llenan por JS después (ej: la del lightbox):
+    // sin src el navegador las reporta como "rotas" y quedarían ocultas.
+    if (!img.getAttribute('src')) return;
     if (img.complete && img.naturalWidth === 0) mark(img);
     img.addEventListener('error', () => mark(img));
   });
