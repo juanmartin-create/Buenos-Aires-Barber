@@ -422,16 +422,29 @@
     return 'BAB-' + p() + '-' + p();
   }
 
+  // Código correlativo corto (00023). Si la secuencia no existe todavía,
+  // cae al formato viejo BAB-XXXX-XXXX.
+  function nextCode() {
+    return sb.rpc('next_gift_code').then(function (res) {
+      return (!res.error && res.data) ? res.data : genCode();
+    }).catch(function () { return genCode(); });
+  }
+
   function createGiftCard(retries) {
     var sel = $('#newGcServicio');
     var s = serviciosCache.filter(function (x) { return String(x.id) === sel.value; })[0];
     if (!s) { alert('Elegí un servicio.'); return; }
     var btn = $('#newGcCreate'), ok = $('#newGcOk');
     btn.disabled = true; btn.textContent = 'Creando…';
+    nextCode().then(function (code) { createGiftCardWithCode(code, s, retries); });
+  }
+
+  function createGiftCardWithCode(code, s, retries) {
+    var btn = $('#newGcCreate'), ok = $('#newGcOk');
     var payload = {
       order_id: null,                       // cortesía: sin compra
       servicio_id: s.id,
-      code: genCode(),
+      code: code,
       servicio_nombre: s.nombre,
       monto: Number($('#newGcMonto').value) || 0,
       status: 'active',
@@ -561,6 +574,8 @@
   $('#validarForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var code = ($('#codeInput').value || '').trim().toUpperCase();
+    // Si el cliente dice "23", se busca "00023"
+    if (/^\d{1,5}$/.test(code)) code = code.padStart(5, '0');
     var out = $('#validarResult');
     if (!code) return;
     out.innerHTML = '<p class="hint">Buscando…</p>';

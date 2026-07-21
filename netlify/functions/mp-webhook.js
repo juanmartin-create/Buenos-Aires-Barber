@@ -6,7 +6,7 @@
  *  3) Manda el email al destinatario.
  * Idempotente: solo actúa si la gift card sigue en 'pending'.
  * ============================================================ */
-const { sendGiftCardEmail } = require('./lib/email');
+const { sendGiftCardEmail, sendBuyerReceiptEmail } = require('./lib/email');
 
 const SUPA_URL = process.env.SUPABASE_URL || 'https://nueyqdahtetoxsggqshg.supabase.co';
 const SUPA_SECRET = process.env.SUPABASE_SERVICE_KEY;
@@ -61,8 +61,9 @@ exports.handler = async function (event) {
     var rows = up.ok ? await up.json() : [];
     if (!rows.length) return ok(); // ya estaba activa o no existe -> no reenviar
 
-    // 3) Mandar el email al destinatario
+    // 3) Mandar la gift card al destinatario y el comprobante al comprador
     try { await sendGiftCardEmail(rows[0]); } catch (e) { /* el alta ya quedó; el mail se puede reintentar */ }
+    try { await sendBuyerReceiptEmail(rows[0]); } catch (e) { /* idem */ }
     return ok();
   } catch (e) {
     return ok();

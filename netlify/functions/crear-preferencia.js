@@ -31,6 +31,26 @@ function genCode() {
   return 'BAB-' + p() + '-' + p();
 }
 
+// Código correlativo corto (00023) vía secuencia en Supabase.
+// Si el SQL de la secuencia aún no se corrió, cae al formato viejo.
+async function nextCode() {
+  try {
+    var r = await fetch(SUPA_URL + '/rest/v1/rpc/next_gift_code', {
+      method: 'POST',
+      headers: {
+        apikey: SUPA_SECRET, Authorization: 'Bearer ' + SUPA_SECRET,
+        'Content-Type': 'application/json'
+      },
+      body: '{}'
+    });
+    if (r.ok) {
+      var c = await r.json();
+      if (typeof c === 'string' && c) return c;
+    }
+  } catch (e) {}
+  return genCode();
+}
+
 exports.handler = async function (event) {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: CORS, body: '' };
   if (event.httpMethod !== 'POST') return resp(405, 'Método no permitido');
@@ -64,7 +84,7 @@ exports.handler = async function (event) {
   while (attempt < 5 && !gift) {
     attempt++;
     var payload = {
-      servicio_id: serv.id, code: genCode(), servicio_nombre: serv.nombre,
+      servicio_id: serv.id, code: await nextCode(), servicio_nombre: serv.nombre,
       monto: serv.precio, status: 'pending',
       recipient_name: body.recipient_name || null,
       recipient_email: body.recipient_email,
