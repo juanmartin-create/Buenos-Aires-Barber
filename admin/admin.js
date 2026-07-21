@@ -43,13 +43,11 @@
 
   function aplicarRol(session) {
     if (esDueno(session)) return;
-    ['contenido'].forEach(function (name) {
+    // Recepción: solo Gift Cards y Validar
+    ['contenido', 'equipo', 'servicios'].forEach(function (name) {
       var tab = document.querySelector('.tab[data-tab="' + name + '"]');
       if (tab) tab.style.display = 'none';
     });
-    // Recepción ve "Precios y servicios"? No: solo Gift Cards y Validar.
-    var tabServ = document.querySelector('.tab[data-tab="servicios"]');
-    if (tabServ) tabServ.style.display = 'none';
     // Activar Gift Cards por defecto
     document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
     document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
