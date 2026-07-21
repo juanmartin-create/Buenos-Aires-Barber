@@ -303,7 +303,7 @@
     var wrap = $('#barberosForm');
     if (!wrap) return;
     wrap.innerHTML = '<p class="hint">Cargando…</p>';
-    sb.from('barberos').select('*').order('orden').then(function (res) {
+    sb.from('barberos').select('*').order('orden').order('id').then(function (res) {
       if (res.error) {
         wrap.innerHTML = '<p class="error">No se pudo cargar el equipo. ¿Corriste el SQL de la tabla "barberos"? (supabase-barberos.sql)</p>';
         return;
@@ -328,6 +328,12 @@
     var row = el('div', { class: 'row' });
     row.appendChild(fNombre.wrap); row.appendChild(fRol.wrap); row.appendChild(fOrden.wrap);
 
+    var fEsp = field('Especialidad (ej: Fades y diseños)', 'text', b.especialidad);
+    var fBio = el('div', { class: 'field' });
+    fBio.appendChild(el('label', null, 'Descripción (se ve en el pop-up al tocar al barbero)'));
+    var bio = el('textarea', null); bio.value = b.bio || '';
+    fBio.appendChild(bio);
+
     var fUrl = el('div', { class: 'field' });
     fUrl.appendChild(el('label', null, 'URL de la foto'));
     var url = el('input', { type: 'text', value: b.foto_url || '' });
@@ -348,7 +354,7 @@
         });
     });
 
-    grow.appendChild(row); grow.appendChild(fUrl); grow.appendChild(fFile);
+    grow.appendChild(row); grow.appendChild(fEsp.wrap); grow.appendChild(fBio); grow.appendChild(fUrl); grow.appendChild(fFile);
     box.appendChild(prev); box.appendChild(grow);
     card.appendChild(box);
 
@@ -372,6 +378,8 @@
       sb.from('barberos').update({
         nombre: fNombre.input.value.trim(),
         rol: fRol.input.value.trim() || 'Barbero',
+        especialidad: fEsp.input.value.trim() || null,
+        bio: bio.value.trim() || null,
         foto_url: url.value.trim() || null,
         orden: Number(fOrden.input.value) || 0,
         activo: chk.checked,
@@ -412,6 +420,8 @@
       return sb.from('barberos').insert({
         nombre: nombre,
         rol: ($('#newBarberoRol').value || '').trim() || 'Barbero',
+        especialidad: (($('#newBarberoEsp') || {}).value || '').trim() || null,
+        bio: (($('#newBarberoBio') || {}).value || '').trim() || null,
         foto_url: fotoUrl,
         orden: maxOrden + 1,
         activo: true

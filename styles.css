@@ -973,6 +973,76 @@ em { font-style: italic; color: var(--copper); }
 ::-webkit-scrollbar-thumb { background: var(--bg-3); }
 ::-webkit-scrollbar-thumb:hover { background: var(--copper-2); }
 
+/* ---------- Pop-up de barbero (especialidad) ---------- */
+.barber-click { cursor: pointer; }
+.barber-esp-tag {
+  position: absolute; top: 14px; left: 14px; z-index: 2;
+  padding: 6px 12px;
+  font-family: var(--display); font-weight: 300;
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink); background: rgba(9, 13, 11, 0.72);
+  border: 1px solid rgba(183, 118, 54, 0.5); border-radius: 2px;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.bm-overlay {
+  position: fixed; inset: 0; z-index: 2100;
+  display: flex; align-items: center; justify-content: center;
+  padding: clamp(16px, 4vw, 48px);
+  background: rgba(5, 8, 7, 0.88);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.45s var(--ease), visibility 0.45s var(--ease);
+}
+.bm-overlay.open { opacity: 1; visibility: visible; }
+.bm-card {
+  position: relative;
+  display: grid; grid-template-columns: 320px 1fr;
+  width: min(760px, 100%); max-height: 86vh; overflow: hidden;
+  background: linear-gradient(165deg, #17221c 0%, #0e1410 100%);
+  border: 1px solid var(--line-strong); border-radius: 3px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+  transform: translateY(14px) scale(0.98);
+  transition: transform 0.45s var(--ease);
+}
+.bm-overlay.open .bm-card { transform: translateY(0) scale(1); }
+.bm-img { position: relative; min-height: 340px; }
+.bm-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.bm-body { padding: clamp(28px, 4vw, 44px); display: flex; flex-direction: column; gap: 10px; }
+.bm-rol {
+  font-family: var(--display); font-weight: 300;
+  font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.bm-nombre { font-family: var(--benton); font-size: clamp(28px, 3.4vw, 42px); line-height: 1.05; color: var(--ink); }
+.bm-esp {
+  font-family: var(--benton); font-style: italic;
+  font-size: clamp(17px, 1.8vw, 21px); color: var(--copper);
+}
+.bm-bio { color: var(--ink-dim); font-size: 15.5px; line-height: 1.7; }
+.bm-cta {
+  margin-top: auto; align-self: flex-start;
+  display: inline-flex; align-items: center;
+  padding: 14px 28px;
+  font-family: var(--display); font-weight: 300;
+  font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase;
+  background: var(--copper); color: #120d07;
+  transition: background 0.35s ease, transform 0.35s var(--ease);
+}
+.bm-cta:hover { background: #c98944; transform: translateY(-2px); }
+.bm-close {
+  position: absolute; top: 12px; right: 12px; z-index: 3;
+  width: 40px; height: 40px; border-radius: 50%;
+  font-size: 22px; line-height: 1; color: var(--ink);
+  background: rgba(9, 13, 11, 0.6); border: 1px solid var(--line);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.bm-close:hover { background: var(--copper); border-color: var(--copper); color: #120d07; }
+@media (max-width: 680px) {
+  .bm-card { grid-template-columns: 1fr; max-height: 90vh; overflow-y: auto; }
+  .bm-img { min-height: 300px; }
+  .bm-cta { align-self: stretch; justify-content: center; margin-top: 8px; }
+}
+
 /* ---------- Música ambiente ---------- */
 .music-fab {
   position: fixed; right: clamp(14px, 3vw, 28px); bottom: clamp(14px, 3vw, 28px);

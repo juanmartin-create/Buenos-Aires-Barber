@@ -120,18 +120,69 @@
     var grid = document.querySelector('.team-grid');
     if (!grid) return;
     grid.innerHTML = rows.map(function (b) {
-      return '<article class="barber">' +
+      return '<article class="barber barber-click" role="button" tabindex="0" aria-label="Ver más de ' + escHtml(b.nombre) + '">' +
         '<div class="barber-img"><img src="' + escHtml(b.foto_url || '') + '" alt="' + escHtml(b.nombre) + '" /></div>' +
+        (b.especialidad ? '<span class="barber-esp-tag">' + escHtml(b.especialidad) + '</span>' : '') +
         '<h3>' + escHtml(b.nombre) + '</h3><p>' + escHtml(b.rol || 'Barbero') + '</p>' +
         '</article>';
     }).join('');
+    Array.prototype.forEach.call(grid.children, function (card, i) {
+      card.addEventListener('click', function () { openBarber(rows[i]); });
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openBarber(rows[i]); }
+      });
+    });
+  }
+
+  // ---- Pop-up con la info de cada barbero ----
+  var barberModalEl = null;
+  function buildBarberModal() {
+    var m = document.createElement('div');
+    m.className = 'bm-overlay';
+    m.setAttribute('role', 'dialog');
+    m.setAttribute('aria-modal', 'true');
+    m.innerHTML =
+      '<div class="bm-card">' +
+      '<button class="bm-close" aria-label="Cerrar">&times;</button>' +
+      '<div class="bm-img"><img alt="" /></div>' +
+      '<div class="bm-body">' +
+      '<p class="bm-rol"></p>' +
+      '<h3 class="bm-nombre"></h3>' +
+      '<p class="bm-esp"></p>' +
+      '<p class="bm-bio"></p>' +
+      '<a class="bm-cta" href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener">Reservar turno</a>' +
+      '</div></div>';
+    document.body.appendChild(m);
+    function close() { m.classList.remove('open'); document.body.style.overflow = ''; }
+    m.addEventListener('click', function (e) { if (e.target === m) close(); });
+    m.querySelector('.bm-close').addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    m.querySelector('.bm-cta').addEventListener('click', function (e) {
+      var w = document.querySelector('.booksy-widget-button');
+      if (w) { e.preventDefault(); close(); w.click(); }
+    });
+    return m;
+  }
+  function openBarber(b) {
+    if (!barberModalEl) barberModalEl = buildBarberModal();
+    var q = function (s) { return barberModalEl.querySelector(s); };
+    q('.bm-img img').src = b.foto_url || '';
+    q('.bm-img img').alt = b.nombre || '';
+    q('.bm-nombre').textContent = b.nombre || '';
+    q('.bm-rol').textContent = b.rol || 'Barbero';
+    q('.bm-esp').textContent = b.especialidad || '';
+    q('.bm-esp').style.display = b.especialidad ? '' : 'none';
+    q('.bm-bio').textContent = b.bio || '';
+    q('.bm-bio').style.display = b.bio ? '' : 'none';
+    barberModalEl.classList.add('open');
+    document.body.style.overflow = 'hidden';
   }
 
   function run() {
     rest('site_content?select=key,value,tipo').then(applyContent);
     rest('servicios?select=slug,precio,precio_efectivo,duracion&activo=eq.true&order=orden')
       .then(applyServicios);
-    rest('barberos?select=nombre,rol,foto_url&activo=eq.true&order=orden')
+    rest('barberos?select=*&activo=eq.true&order=orden.asc,id.asc')
       .then(applyBarberos);
   }
 
