@@ -30,6 +30,12 @@ const C = {
 
 function fmtPrecio(n) { return '$' + (Math.round(Number(n) || 0)).toLocaleString('es-AR'); }
 
+function fmtVence(s) {
+  if (!s) return '';
+  try { return new Date(s).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }); }
+  catch (e) { return ''; }
+}
+
 function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
@@ -69,6 +75,7 @@ function buildEmail(g) {
     '<p style="margin:0 0 8px;color:' + C.dim + ';font-size:13px;text-align:center;font-family:Arial,sans-serif">Tu código de gift card</p>',
     codeBox(g.code),
     '<p style="margin:0 0 4px;color:' + C.dim + ';font-size:14px;text-align:center">Valor: <span style="color:' + C.ink + '">' + fmtPrecio(g.monto) + '</span></p>',
+    (g.expires_at ? '<p style="margin:0 0 4px;color:' + C.dim + ';font-size:13px;text-align:center">Válida hasta el <span style="color:' + C.ink + '">' + fmtVence(g.expires_at) + '</span></p>' : ''),
     '<p style="margin:20px 0 0;color:' + C.dim + ';font-size:14px;line-height:1.7;text-align:center">Presentá este código en el local para vivir tu experiencia.<br/>Cada servicio incluye una bebida de cortesía.</p>',
     '</div>'
   ].join(''));
@@ -85,6 +92,7 @@ function buildBuyerEmail(g) {
     '<tr><td style="padding:9px 0;color:' + C.dim + ';border-bottom:1px solid ' + C.line + '">Monto</td><td style="padding:9px 0;color:' + C.ink + ';text-align:right;border-bottom:1px solid ' + C.line + '">' + fmtPrecio(g.monto) + '</td></tr>',
     '<tr><td style="padding:9px 0;color:' + C.dim + ';border-bottom:1px solid ' + C.line + '">Código</td><td style="padding:9px 0;color:' + C.copper + ';text-align:right;border-bottom:1px solid ' + C.line + ';font-family:Consolas,monospace;letter-spacing:.1em">' + escapeHtml(g.code) + '</td></tr>',
     (g.recipient_email ? '<tr><td style="padding:9px 0;color:' + C.dim + ';border-bottom:1px solid ' + C.line + '">Enviada a</td><td style="padding:9px 0;color:' + C.ink + ';text-align:right;border-bottom:1px solid ' + C.line + '">' + escapeHtml(g.recipient_email) + '</td></tr>' : ''),
+    (g.expires_at ? '<tr><td style="padding:9px 0;color:' + C.dim + ';border-bottom:1px solid ' + C.line + '">Válida hasta</td><td style="padding:9px 0;color:' + C.ink + ';text-align:right;border-bottom:1px solid ' + C.line + '">' + fmtVence(g.expires_at) + '</td></tr>' : ''),
     (g.mp_payment_id ? '<tr><td style="padding:9px 0;color:' + C.dim + '">N° de operación (Mercado Pago)</td><td style="padding:9px 0;color:' + C.ink + ';text-align:right">' + escapeHtml(g.mp_payment_id) + '</td></tr>' : ''),
     '</table>',
     '<p style="margin:0;color:' + C.dim + ';font-size:13px;line-height:1.7;text-align:center">La gift card con el código ya fue enviada al email del destinatario.<br/>Ante cualquier consulta, respondé este correo.</p>',

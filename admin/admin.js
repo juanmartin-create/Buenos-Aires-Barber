@@ -35,13 +35,40 @@
   // ---------- AUTH ----------
   var loginScreen = $('#login'), appScreen = $('#app');
 
+  // Dueño: acceso total. Cualquier otro usuario (recepción): solo Gift Cards y Validar.
+  var OWNER_EMAILS = ['diegoizzo@icloud.com', 'juanmartin@simplex.la'];
+  function esDueno(session) {
+    return OWNER_EMAILS.indexOf(String(session.user.email || '').toLowerCase()) !== -1;
+  }
+
+  function aplicarRol(session) {
+    if (esDueno(session)) return;
+    ['contenido'].forEach(function (name) {
+      var tab = document.querySelector('.tab[data-tab="' + name + '"]');
+      if (tab) tab.style.display = 'none';
+    });
+    // Recepción ve "Precios y servicios"? No: solo Gift Cards y Validar.
+    var tabServ = document.querySelector('.tab[data-tab="servicios"]');
+    if (tabServ) tabServ.style.display = 'none';
+    // Activar Gift Cards por defecto
+    document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+    document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
+    var gcTab = document.querySelector('.tab[data-tab="giftcards"]');
+    if (gcTab) gcTab.classList.add('active');
+    var gcPanel = $('#tab-giftcards');
+    if (gcPanel) gcPanel.classList.add('active');
+  }
+
   function showApp(session) {
     loginScreen.hidden = true;
     appScreen.hidden = false;
     $('#userEmail').textContent = session.user.email;
-    loadContenido();
-    loadServicios();
-    loadBarberos();
+    aplicarRol(session);
+    if (esDueno(session)) {
+      loadContenido();
+      loadBarberos();
+    }
+    loadServicios(); // recepción también lo necesita para el select de cortesías
     loadGiftCards();
   }
   function showLogin() {
@@ -112,7 +139,8 @@
     hero_sub: 'Subtítulo (hero)',
     hero_gift_tagline: 'Frase de gift card (hero)',
     hero_bg: 'Foto de fondo del hero',
-    historia_img: 'Foto de la sección historia'
+    historia_img: 'Foto de la sección historia',
+    marquee_texto: 'Banner en movimiento (frases del hero)'
   };
 
   function loadContenido() {
@@ -170,6 +198,9 @@
       card.appendChild(fld);
       if (row.key === 'hero_titulo') {
         card.appendChild(el('p', { class: 'hint' }, 'Tip: poné una palabra entre *asteriscos* para que salga en itálica dorada. Ej: El último *ritual* masculino.'));
+      }
+      if (row.key === 'marquee_texto') {
+        card.appendChild(el('p', { class: 'hint' }, 'Separá cada frase con una barra vertical | — se muestran en loop con puntos entre medio. Ideal para horarios, teléfono y servicios.'));
       }
     }
 
@@ -441,10 +472,14 @@
 
   function createGiftCardWithCode(code, s, retries) {
     var btn = $('#newGcCreate'), ok = $('#newGcOk');
+    var dias = Number(($('#newGcVigencia') || {}).value) || 90;
+    var venc = new Date();
+    venc.setDate(venc.getDate() + dias);
     var payload = {
       order_id: null,                       // cortesía: sin compra
       servicio_id: s.id,
       code: code,
+      expires_at: venc.toISOString(),
       servicio_nombre: s.nombre,
       monto: Number($('#newGcMonto').value) || 0,
       status: 'active',
@@ -531,8 +566,9 @@
     }
     var html = '<table><thead><tr>' +
       '<th>Código</th><th>Servicio</th><th>Monto</th><th>Destinatario</th>' +
-      '<th>Estado</th><th>Fecha</th><th></th></tr></thead><tbody>';
+      '<th>Estado</th><th>Fecha</th><th>Vence</th><th></th></tr></thead><tbody>';
     rows.forEach(function (g) {
+      if (isVencida(g)) marcarVencida(g);
       html += '<tr>' +
         '<td><span class="code">' + esc(g.code) + '</span></td>' +
         '<td>' + esc(g.servicio_nombre) + '</td>' +
@@ -540,6 +576,7 @@
         '<td>' + esc(g.recipient_name || '—') + (g.recipient_email ? '<br><small style="color:var(--ink-dim)">' + esc(g.recipient_email) + '</small>' : '') + '</td>' +
         '<td>' + statusBadge(g.status) + '</td>' +
         '<td>' + fmtFecha(g.created_at) + '</td>' +
+        '<td>' + fmtFecha(g.expires_at) + '</td>' +
         '<td>' + (g.status === 'active' ? '<button class="mini-btn" data-redeem="' + esc(g.id) + '">Marcar canjeada</button>' : '') + '</td>' +
         '</tr>';
     });
@@ -556,6 +593,15 @@
   function statusBadge(s) {
     var map = { active: 'Activa', redeemed: 'Canjeada', pending: 'Pendiente de pago', expired: 'Vencida' };
     return '<span class="badge ' + s + '">' + (map[s] || s) + '</span>';
+  }
+
+  // Una gift card activa cuya fecha de vencimiento ya pasó se trata como vencida
+  function isVencida(g) {
+    return g.status === 'active' && g.expires_at && new Date(g.expires_at) < new Date();
+  }
+  function marcarVencida(g) {
+    sb.from('gift_cards').update({ status: 'expired' }).eq('id', g.id).then(function () {});
+    g.status = 'expired';
   }
 
   function redeem(id, done) {
@@ -588,6 +634,7 @@
   });
 
   function renderValidar(g) {
+    if (isVencida(g)) marcarVencida(g);
     var out = $('#validarResult');
     var cls = g.status === 'active' ? 'ok' : 'used';
     var box = el('div', { class: 'gc-result ' + cls });
@@ -596,6 +643,7 @@
       '<p class="gc-meta">Código: <span class="code">' + esc(g.code) + '</span></p>' +
       '<p class="gc-meta">Valor: ' + fmtPrecio(g.monto) + '</p>' +
       '<p class="gc-meta">Para: ' + esc(g.recipient_name || '—') + '</p>' +
+      (g.expires_at ? '<p class="gc-meta">Vence: ' + fmtFecha(g.expires_at) + '</p>' : '') +
       '<p class="gc-big">Estado: ' + statusBadge(g.status) +
         (g.status === 'redeemed' ? ' <small style="color:var(--ink-dim)">el ' + fmtFecha(g.redeemed_at) + '</small>' : '') +
       '</p>';
@@ -611,6 +659,8 @@
       box.appendChild(btn);
     } else if (g.status === 'pending') {
       box.appendChild(el('p', { class: 'notice' }, '⏳ Pago no confirmado todavía. Esta gift card aún no es válida.'));
+    } else if (g.status === 'expired') {
+      box.appendChild(el('p', { class: 'notice' }, '⚠ Esta gift card venció' + (g.expires_at ? ' el ' + fmtFecha(g.expires_at) : '') + '.'));
     } else {
       box.appendChild(el('p', { class: 'notice' }, '⚠ Esta gift card ya fue utilizada.'));
     }

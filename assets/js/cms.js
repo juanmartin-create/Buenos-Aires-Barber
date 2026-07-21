@@ -45,6 +45,7 @@
           }
         } else { // texto
           if (row.key === 'hero_titulo') setHeroTitle(el, row.value);
+          else if (row.key === 'marquee_texto') setMarquee(el, row.value);
           else el.textContent = row.value;
         }
       });
@@ -64,6 +65,20 @@
       return '<span class="word' + (italic ? ' italic' : '') +
              '" style="transform:none;opacity:1">' + clean + '</span>';
     }).join(' ');
+    el.innerHTML = html;
+  }
+
+  // El banner en loop: las frases van separadas por "|" en el panel.
+  // Se duplica la lista para que la animación infinita no tenga cortes.
+  function setMarquee(el, text) {
+    var items = String(text).split('|').map(function (s) { return s.trim(); }).filter(Boolean);
+    if (!items.length) return;
+    var html = '';
+    for (var k = 0; k < 2; k++) {
+      items.forEach(function (it) {
+        html += '<span>' + escHtml(it) + '</span><span>•</span>';
+      });
+    }
     el.innerHTML = html;
   }
 

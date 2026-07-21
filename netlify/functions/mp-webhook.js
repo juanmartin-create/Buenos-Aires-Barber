@@ -53,10 +53,13 @@ exports.handler = async function (event) {
     };
 
     // 2) Activar SOLO si sigue pendiente (idempotencia: si ya está active, no repite)
+    // Vencimiento automático: 3 meses desde la acreditación del pago
+    var venc = new Date();
+    venc.setMonth(venc.getMonth() + 3);
     var up = await fetch(SUPA_URL + '/rest/v1/gift_cards?id=eq.' + encodeURIComponent(giftId) +
       '&status=eq.pending', {
       method: 'PATCH', headers: supaHeaders,
-      body: JSON.stringify({ status: 'active', mp_payment_id: String(paymentId) })
+      body: JSON.stringify({ status: 'active', mp_payment_id: String(paymentId), expires_at: venc.toISOString() })
     });
     var rows = up.ok ? await up.json() : [];
     if (!rows.length) return ok(); // ya estaba activa o no existe -> no reenviar
