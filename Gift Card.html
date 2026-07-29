@@ -116,8 +116,18 @@
     .exp-card.featured { grid-column: span 2; }
   }
   @media (max-width: 560px) {
-    .exp-grid { grid-template-columns: 1fr; }
-    .exp-card.featured { grid-column: span 1; flex-direction: column; align-items: flex-start; }
+    /* 2 servicios por fila también en mobile: tarjetas compactas */
+    .exp-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .exp-card { padding: 14px; gap: 8px; }
+    .exp-card.featured { grid-column: span 2; flex-direction: column; align-items: flex-start; }
+    .exp-ic { width: 40px; height: 40px; }
+    .exp-ic svg { width: 20px; height: 20px; }
+    .exp-card h3 { font-size: 15px; line-height: 1.25; }
+    .exp-card p { font-size: 12px; line-height: 1.45; }
+    .exp-price { font-size: 21px; }
+    .exp-dur { font-size: 10px; margin-left: 4px; }
+    .exp-cash { font-size: 11px; }
+    .exp-check { top: 10px; right: 10px; width: 19px; height: 19px; }
     .gc-logo { display: none; }
   }
 </style>
@@ -143,10 +153,10 @@
       <h1>Regalá una <em>experiencia</em>, no un objeto.</h1>
       <p class="lead">Un corte, una barba o el ritual completo a navaja — con su bebida de cortesía incluida. Elegí la experiencia, completás los datos de quien lo recibe y la gift card le llega por mail al instante.</p>
       <div class="gc-actions">
-        <a class="gc-buy-cta" href="#gc-checkout">Elegí tu experiencia ↓</a>
+        <a class="gc-buy-cta" href="#gc-experiencias">Elegí tu experiencia ↓</a>
         <span class="gc-note">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-          Sin vencimiento. Válida para cualquier barbero de la casa.
+          Válida para cualquier barbero de la casa.
         </span>
       </div>
     </div>
@@ -174,7 +184,7 @@
 </section>
 
 <!-- EXPERIENCIAS -->
-<section class="gc-exps">
+<section class="gc-exps" id="gc-experiencias">
   <div class="gc-exps-inner">
     <header class="gc-exps-head">
       <p class="eyebrow">— Elegí el ritual</p>
@@ -314,6 +324,48 @@
     </div>
   </div>
 </footer>
+
+<!-- Música ambiente (la misma de la landing; recuerda el estado vía localStorage) -->
+<audio id="bgMusic" src="assets/audio/bsas-barbershop-music.mp3" loop preload="none"></audio>
+<button class="music-fab" id="musicFab" aria-label="Música de la casa" aria-pressed="false" title="Música de la casa">
+  <span class="music-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+</button>
+<script>
+(function () {
+  var fab = document.getElementById('musicFab');
+  var audio = document.getElementById('bgMusic');
+  if (!fab || !audio) return;
+  audio.volume = 0.35;
+
+  function set(on) {
+    fab.classList.toggle('playing', on);
+    fab.setAttribute('aria-pressed', on ? 'true' : 'false');
+    try { localStorage.setItem('bab-music', on ? '1' : '0'); } catch (e) {}
+  }
+
+  fab.addEventListener('click', function () {
+    if (audio.paused) {
+      audio.play().then(function () { set(true); }).catch(function () {});
+    } else {
+      audio.pause();
+      set(false);
+    }
+  });
+
+  // La música arranca en la primera interacción, salvo que el visitante la haya apagado antes.
+  var optedOut = false;
+  try { optedOut = localStorage.getItem('bab-music') === '0'; } catch (e) {}
+  if (!optedOut) {
+    var evs = ['pointerdown', 'touchend', 'keydown', 'wheel'];
+    var once = function (e) {
+      evs.forEach(function (ev) { window.removeEventListener(ev, once); });
+      if (e && e.target && fab.contains(e.target)) return;
+      audio.play().then(function () { set(true); }).catch(function () {});
+    };
+    evs.forEach(function (ev) { window.addEventListener(ev, once, { passive: true }); });
+  }
+})();
+</script>
 
 <script src="assets/js/supabase-config.js?v=2"></script>
 <script>

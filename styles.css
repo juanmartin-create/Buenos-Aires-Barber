@@ -107,7 +107,7 @@ button { font: inherit; background: none; border: none; color: inherit; cursor: 
 .loader-inner { text-align: center; }
 .loader-mark { width: 92px; height: auto; margin: 0 auto 26px; opacity: 0.92; }
 .loader-line {
-  display: block; width: 0; height: 1px; background: var(--grad-brand);
+  display: block; width: 0; height: 1px; background: #e8b170;
   margin: 0 auto 20px; animation: load-line 1.6s ease forwards;
 }
 @keyframes load-line { to { width: 120px; } }
@@ -233,7 +233,7 @@ em { font-style: italic; color: var(--copper); }
 .hero {
   position: relative; min-height: 100vh; min-height: 100dvh;
   display: flex; align-items: center; justify-content: center;
-  overflow: hidden; padding: 120px var(--pad) 60px;
+  overflow: hidden; padding: 120px var(--pad) 150px;
 }
 .hero-bg { position: absolute; inset: 0; z-index: 0; }
 .hero-bg img {
@@ -269,8 +269,8 @@ em { font-style: italic; color: var(--copper); }
 .hero-eyebrow .line { display: inline-block; width: 40px; height: 1px; background: var(--grad-brand); }
 .hero-title {
   font-family: var(--benton);
-  font-size: clamp(38px, 6.6vw, 96px);
-  line-height: 0.98; font-weight: 400;
+  font-size: clamp(38px, 5.6vw, 82px);
+  line-height: 1.02; font-weight: 400;
   letter-spacing: -0.01em;
 }
 .hero-title .word {
@@ -333,6 +333,18 @@ em { font-style: italic; color: var(--copper); }
   .hero-scroll { display: none; }
   .hero-marquee { padding: 12px 0; }
   .marquee-track span { font-size: 13px; }
+  .hero { padding-bottom: 120px; }
+}
+
+/* Pantallas bajas (notebooks): compactar el hero para que el tagline
+   no choque con el indicador de scroll ni el marquee */
+@media (max-height: 860px) and (min-width: 901px) {
+  .hero-brand { width: clamp(180px, 20vw, 270px); margin-bottom: 20px; }
+  .hero-eyebrow { margin-bottom: 18px; }
+  .hero-title { font-size: clamp(34px, 4.8vw, 64px); }
+  .hero-sub { margin: 20px auto 26px; }
+  .hero-gift-tagline { margin-top: 20px; }
+  .hero-scroll { display: none; }
 }
 
 /* ---------- La Barbería ---------- */
@@ -479,7 +491,7 @@ em { font-style: italic; color: var(--copper); }
   background: linear-gradient(180deg, transparent 40%, rgba(9,13,11,0.85) 100%);
 }
 .barber-img img {
-  width: 100%; height: 100%; object-fit: cover;
+  width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%;
   filter: grayscale(0.3) brightness(0.9);
   transition: transform 0.8s var(--ease), filter 0.8s ease;
 }
@@ -598,6 +610,10 @@ em { font-style: italic; color: var(--copper); }
 .prensa-card:hover { transform: translateY(-6px); border-color: var(--copper); }
 .prensa-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.92); }
 @keyframes prensa-marquee { to { transform: translateX(calc(-50% - 18px)); } }
+/* En mobile el carrusel pasa más rápido */
+@media (max-width: 700px) {
+  .prensa-track { animation-duration: 18s; }
+}
 
 /* ---------- Reviews ---------- */
 .reviews {
@@ -873,6 +889,22 @@ em { font-style: italic; color: var(--copper); }
   .cf-cue { display: none; }
 }
 
+/* Modo estático (mobile): sin pin de scroll — las 4 fotos en grilla */
+.clientes-feed.cf-static .cf-pin { min-height: 0; display: block; }
+.clientes-feed.cf-static .cf-inner { padding: 72px var(--pad) 56px; }
+.clientes-feed.cf-static .cf-post { width: min(480px, 90vw); height: auto; }
+.clientes-feed.cf-static .cf-media {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  padding: 0 12px; flex: 0 0 auto; overflow: visible; background: none;
+}
+.clientes-feed.cf-static .cf-photo {
+  position: static; width: 100%; height: auto; aspect-ratio: 4/5;
+  opacity: 1 !important; transform: none !important;
+}
+.clientes-feed.cf-static .cf-progress,
+.clientes-feed.cf-static .cf-counter,
+.clientes-feed.cf-static .cf-cue { display: none; }
+
 /* ---- Image fallback (neon placeholder if a photo fails) ---- */
 .img-failed { background: linear-gradient(135deg, #131a15, #1a251e 55%, #22302a); position: relative; }
 .img-failed img { opacity: 0; }
@@ -1006,7 +1038,8 @@ em { font-style: italic; color: var(--copper); }
 }
 .bm-overlay.open .bm-card { transform: translateY(0) scale(1); }
 .bm-img { position: relative; min-height: 340px; }
-.bm-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* Ancla el recorte arriba: las caras están en el tercio superior de las fotos */
+.bm-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; }
 .bm-body { padding: clamp(28px, 4vw, 44px); display: flex; flex-direction: column; gap: 10px; }
 .bm-rol {
   font-family: var(--display); font-weight: 300;

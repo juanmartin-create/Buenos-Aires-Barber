@@ -53,12 +53,14 @@
   }
 
   // El título del hero está partido en <span class="word"> para la animación
-  // GSAP. Si cambia, re-armamos las palabras. Convención: *palabra* => itálica.
+  // GSAP. Si cambia, re-armamos las palabras. Convención: *palabra* => itálica,
+  // "|" => salto de línea.
   // Las dejamos visibles porque este fetch puede resolver DESPUÉS de la
   // animación de intro (si no, quedarían ocultas en su estado inicial).
   function setHeroTitle(el, text) {
     if ((el.getAttribute('data-cms-default') || '') === text) return; // sin cambios
     var html = text.trim().split(/\s+/).map(function (w) {
+      if (w === '|') return '<br aria-hidden="true" />';
       var italic = /^\*.*\*$/.test(w);
       var clean = w.replace(/^\*+|\*+$/g, '')
                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -178,12 +180,32 @@
     document.body.style.overflow = 'hidden';
   }
 
+  // ---- 4) Prensa (tabla prensa) ----
+  // Si la tabla existe y tiene filas, re-renderiza el carrusel (duplicado
+  // para el loop infinito). Si no, quedan las 5 tarjetas del HTML.
+  function applyPrensa(rows) {
+    if (!Array.isArray(rows) || rows.length === 0) return;
+    var track = document.querySelector('.prensa-track');
+    if (!track) return;
+    var card = function (p, dup) {
+      return '<a class="prensa-card" href="' + escHtml(p.link || '#') + '"' +
+        (p.link ? ' target="_blank" rel="noopener"' : '') +
+        (dup ? ' tabindex="-1" aria-hidden="true"' : '') + '>' +
+        '<img src="' + escHtml(p.imagen_url || '') + '" alt="' + escHtml(dup ? '' : (p.titulo || '')) + '"/></a>';
+    };
+    track.innerHTML =
+      rows.map(function (p) { return card(p, false); }).join('') +
+      rows.map(function (p) { return card(p, true); }).join('');
+  }
+
   function run() {
     rest('site_content?select=key,value,tipo').then(applyContent);
     rest('servicios?select=slug,precio,precio_efectivo,duracion&activo=eq.true&order=orden')
       .then(applyServicios);
     rest('barberos?select=*&activo=eq.true&order=orden.asc,id.asc')
       .then(applyBarberos);
+    rest('prensa?select=*&activo=eq.true&order=orden.asc,id.asc')
+      .then(applyPrensa);
   }
 
   if (document.readyState === 'loading') {

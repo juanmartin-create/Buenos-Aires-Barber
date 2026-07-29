@@ -20,9 +20,13 @@ const MIME = {
 http.createServer((req, res) => {
   let urlPath = decodeURIComponent(req.url.split('?')[0]);
   if (urlPath === '/') urlPath = '/index.html';
-  // Resolver index.html en directorios (ej: /admin/ o /admin) como hace Netlify
+  // Redirigir /admin -> /admin/ (como Netlify) para que los paths relativos funcionen
+  if (!urlPath.endsWith('/') && !path.extname(urlPath)) {
+    res.writeHead(301, { Location: urlPath + '/' });
+    return res.end();
+  }
+  // Resolver index.html en directorios (ej: /admin/)
   if (urlPath.endsWith('/')) urlPath += 'index.html';
-  else if (!path.extname(urlPath)) urlPath += '/index.html';
   const filePath = path.join(ROOT, urlPath);
   if (!filePath.startsWith(ROOT)) { res.writeHead(403); return res.end('Forbidden'); }
   fs.readFile(filePath, (err, data) => {

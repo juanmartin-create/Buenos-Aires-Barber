@@ -40,6 +40,7 @@
     <button class="tab active" data-tab="contenido">Contenido</button>
     <button class="tab" data-tab="equipo">Equipo</button>
     <button class="tab" data-tab="servicios">Precios y servicios</button>
+    <button class="tab" data-tab="prensa">Prensa</button>
     <button class="tab" data-tab="giftcards">Gift Cards</button>
     <button class="tab" data-tab="validar">Validar código</button>
   </nav>
@@ -82,6 +83,29 @@
       <h2>Precios y servicios</h2>
       <p class="hint">Estos precios se muestran en la landing y se usan para las gift cards. Una sola fuente.</p>
       <div id="serviciosForm" class="cards"></div>
+    </section>
+
+    <!-- PRENSA -->
+    <section id="tab-prensa" class="panel">
+      <h2>Prensa</h2>
+      <p class="hint">Las notas en medios que se ven en el carrusel "Hablan de nosotros". Agregá, quitá o actualizá a medida que salgan notas nuevas.</p>
+
+      <details class="create-gc">
+        <summary>＋ Agregar nota de prensa</summary>
+        <div class="card">
+          <div class="row">
+            <div class="field"><label>Medio (ej: Clarín)</label><input id="newPrensaTitulo" type="text" placeholder="Nombre del diario o medio" /></div>
+            <div class="field"><label>Link a la nota (opcional)</label><input id="newPrensaLink" type="url" placeholder="https://…" /></div>
+          </div>
+          <div class="field"><label>Imagen de la nota (se sube al guardar)</label><input id="newPrensaFoto" type="file" accept="image/*" /></div>
+          <div class="save-row">
+            <button id="newPrensaCreate" class="save-btn">Agregar nota</button>
+            <span id="newPrensaOk" class="saved-msg"></span>
+          </div>
+        </div>
+      </details>
+
+      <div id="prensaForm" class="cards"></div>
     </section>
 
     <!-- GIFT CARDS -->

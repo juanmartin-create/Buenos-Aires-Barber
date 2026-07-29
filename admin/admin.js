@@ -44,7 +44,7 @@
   function aplicarRol(session) {
     if (esDueno(session)) return;
     // Recepción: solo Gift Cards y Validar
-    ['contenido', 'equipo', 'servicios'].forEach(function (name) {
+    ['contenido', 'equipo', 'servicios', 'prensa'].forEach(function (name) {
       var tab = document.querySelector('.tab[data-tab="' + name + '"]');
       if (tab) tab.style.display = 'none';
     });
@@ -65,6 +65,7 @@
     if (esDueno(session)) {
       loadContenido();
       loadBarberos();
+      loadPrensa();
     }
     loadServicios(); // recepción también lo necesita para el select de cortesías
     loadGiftCards();
@@ -434,6 +435,136 @@
     }).catch(function (err) {
       newBarberoBtn.disabled = false; newBarberoBtn.textContent = 'Agregar barbero';
       alert('No se pudo subir la foto: ' + (err.message || ''));
+    });
+  });
+
+  // ---------- PRENSA ----------
+  var prensaCache = [];
+  function loadPrensa() {
+    var wrap = $('#prensaForm');
+    if (!wrap) return;
+    wrap.innerHTML = '<p class="hint">Cargando…</p>';
+    sb.from('prensa').select('*').order('orden').order('id').then(function (res) {
+      if (res.error) {
+        wrap.innerHTML = '<p class="error">No se pudo cargar la prensa. ¿Corriste el SQL de la tabla "prensa"? (supabase-prensa.sql)</p>';
+        return;
+      }
+      prensaCache = res.data || [];
+      wrap.innerHTML = prensaCache.length ? '' : '<div class="empty">Todavía no hay notas cargadas.</div>';
+      prensaCache.forEach(function (p) { wrap.appendChild(prensaCard(p)); });
+    });
+  }
+
+  function prensaCard(p) {
+    var card = el('div', { class: 'card' });
+    card.appendChild(el('p', { class: 'card-title' }, esc(p.titulo || 'Nota') + (p.activo ? '' : ' <small style="color:var(--ink-dim)">(oculta)</small>')));
+
+    var box = el('div', { class: 'img-edit' });
+    var prev = el('img', { class: 'img-preview', src: p.imagen_url || '', alt: '' });
+    var grow = el('div', { class: 'grow' });
+
+    var row = el('div', { class: 'row' });
+    var fTitulo = field('Medio', 'text', p.titulo);
+    var fOrden = field('Orden', 'number', p.orden);
+    row.appendChild(fTitulo.wrap); row.appendChild(fOrden.wrap);
+
+    var fLink = field('Link a la nota', 'text', p.link);
+
+    var fUrl = el('div', { class: 'field' });
+    fUrl.appendChild(el('label', null, 'URL de la imagen'));
+    var url = el('input', { type: 'text', value: p.imagen_url || '' });
+    fUrl.appendChild(url);
+    url.addEventListener('input', function () { prev.src = url.value; });
+
+    var fFile = el('div', { class: 'field' });
+    fFile.appendChild(el('label', null, '…o subí una imagen nueva'));
+    var file = el('input', { type: 'file', accept: 'image/*' });
+    fFile.appendChild(file);
+    file.addEventListener('change', function () {
+      if (!file.files[0]) return;
+      url.value = 'Subiendo…';
+      uploadImage(file.files[0]).then(function (u) { url.value = u; prev.src = u; })
+        .catch(function (err) {
+          url.value = p.imagen_url || '';
+          alert('No se pudo subir la imagen: ' + (err.message || ''));
+        });
+    });
+
+    grow.appendChild(row); grow.appendChild(fLink.wrap); grow.appendChild(fUrl); grow.appendChild(fFile);
+    box.appendChild(prev); box.appendChild(grow);
+    card.appendChild(box);
+
+    var togWrap = el('div', { class: 'field' });
+    var tog = el('label', { class: 'toggle' });
+    var chk = el('input', { type: 'checkbox' }); if (p.activo) chk.checked = true;
+    tog.appendChild(chk); tog.appendChild(el('span', { class: 'track' }));
+    tog.appendChild(el('span', null, 'Visible en la web'));
+    togWrap.appendChild(tog);
+    card.appendChild(togWrap);
+
+    var saveRow = el('div', { class: 'save-row' });
+    var btn = el('button', { class: 'save-btn' }, 'Guardar');
+    var msg = el('span', { class: 'saved-msg' }, '✓ Guardado');
+    var del = el('button', { class: 'mini-btn', style: 'margin-left:auto' }, 'Eliminar');
+    saveRow.appendChild(btn); saveRow.appendChild(msg); saveRow.appendChild(del);
+    card.appendChild(saveRow);
+
+    btn.addEventListener('click', function () {
+      var img = url.value.trim();
+      if (!img || img === 'Subiendo…') { alert('Falta la imagen de la nota.'); return; }
+      btn.disabled = true; btn.textContent = 'Guardando…';
+      sb.from('prensa').update({
+        titulo: fTitulo.input.value.trim() || null,
+        link: fLink.input.value.trim() || null,
+        imagen_url: img,
+        orden: Number(fOrden.input.value) || 0,
+        activo: chk.checked,
+        updated_at: new Date().toISOString()
+      }).eq('id', p.id).then(function (res) {
+        btn.disabled = false; btn.textContent = 'Guardar';
+        if (res.error) { alert('Error al guardar: ' + res.error.message); return; }
+        msg.classList.add('show'); setTimeout(function () { msg.classList.remove('show'); }, 1800);
+      });
+    });
+
+    del.addEventListener('click', function () {
+      if (!confirm('¿Eliminar esta nota de prensa? Esta acción no se puede deshacer.\n\nTip: si es algo temporal, destildá "Visible en la web" en vez de eliminar.')) return;
+      del.disabled = true; del.textContent = 'Eliminando…';
+      sb.from('prensa').delete().eq('id', p.id).then(function (res) {
+        if (res.error) { del.disabled = false; del.textContent = 'Eliminar'; alert('Error: ' + res.error.message); return; }
+        loadPrensa();
+      });
+    });
+
+    return card;
+  }
+
+  var newPrensaBtn = $('#newPrensaCreate');
+  if (newPrensaBtn) newPrensaBtn.addEventListener('click', function () {
+    var fileInput = $('#newPrensaFoto');
+    if (!fileInput.files || !fileInput.files[0]) { alert('Elegí la imagen de la nota.'); return; }
+    var ok = $('#newPrensaOk');
+    newPrensaBtn.disabled = true; newPrensaBtn.textContent = 'Agregando…';
+
+    uploadImage(fileInput.files[0]).then(function (imgUrl) {
+      var maxOrden = prensaCache.reduce(function (m, x) { return Math.max(m, x.orden || 0); }, 0);
+      return sb.from('prensa').insert({
+        titulo: ($('#newPrensaTitulo').value || '').trim() || null,
+        link: ($('#newPrensaLink').value || '').trim() || null,
+        imagen_url: imgUrl,
+        orden: maxOrden + 1,
+        activo: true
+      });
+    }).then(function (res) {
+      newPrensaBtn.disabled = false; newPrensaBtn.textContent = 'Agregar nota';
+      if (res.error) { alert('Error al agregar: ' + res.error.message + '\n\n¿Corriste el SQL de la tabla "prensa"? (supabase-prensa.sql)'); return; }
+      ok.textContent = '✓ Nota agregada';
+      ok.classList.add('show'); setTimeout(function () { ok.classList.remove('show'); }, 4000);
+      $('#newPrensaTitulo').value = ''; $('#newPrensaLink').value = ''; fileInput.value = '';
+      loadPrensa();
+    }).catch(function (err) {
+      newPrensaBtn.disabled = false; newPrensaBtn.textContent = 'Agregar nota';
+      alert('No se pudo subir la imagen: ' + (err.message || ''));
     });
   });
 

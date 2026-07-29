@@ -84,6 +84,19 @@ function setupClientesFeed() {
   const media = document.getElementById('cfMedia');
   if (!section || !pin || !media) return;
 
+  // En mobile el pin de scroll resulta incómodo: se muestra una grilla estática.
+  if (window.matchMedia('(max-width: 820px)').matches) {
+    section.classList.add('cf-static');
+    const first = media.querySelector('.cf-photo');
+    const glowEl = document.getElementById('cfGlow');
+    if (glowEl && first) {
+      const apply = () => { glowEl.style.backgroundImage = `url("${first.currentSrc || first.src}")`; };
+      if (first.complete && first.naturalWidth) apply();
+      else first.addEventListener('load', apply, { once: true });
+    }
+    return;
+  }
+
   const photos = [...media.querySelectorAll('.cf-photo')];
   const dots = [...document.querySelectorAll('#cfProgress .cf-dot')];
   const numEl = document.getElementById('cfNum');
