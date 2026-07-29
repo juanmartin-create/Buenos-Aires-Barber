@@ -138,10 +138,13 @@
   <div class="gc-header-inner">
     <a href="index.html" class="gc-back">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-      Volver a la casa
+      <span data-en="Back to the house">Volver a la casa</span>
     </a>
     <a href="index.html" class="gc-logo"><img src="assets/img/logo/logo-horizontal-blanco.png" alt="Buenos Aires Barbershop" /></a>
-    <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="nav-cta">Reservar</a>
+    <div style="display:flex;align-items:center;gap:14px">
+      <button class="nav-lang" data-i18n-btn type="button">EN</button>
+      <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="nav-cta" data-en="Book">Reservar</a>
+    </div>
   </div>
 </header>
 
@@ -149,14 +152,14 @@
 <section class="gc-hero">
   <div class="gc-hero-inner">
     <div class="gc-hero-text">
-      <p class="eyebrow">— Gift Card · Experiencia</p>
-      <h1>Regalá una <em>experiencia</em>, no un objeto.</h1>
-      <p class="lead">Un corte, una barba o el ritual completo a navaja — con su bebida de cortesía incluida. Elegí la experiencia, completás los datos de quien lo recibe y la gift card le llega por mail al instante.</p>
+      <p class="eyebrow" data-en="— Gift Card · Experience">— Gift Card · Experiencia</p>
+      <h1 data-en="Gift an <em>experience</em>, not an object.">Regalá una <em>experiencia</em>, no un objeto.</h1>
+      <p class="lead" data-en="A haircut, a beard trim or the full straight-razor ritual — with the complimentary drink included. Choose the experience, fill in the recipient’s details and the gift card arrives by email instantly.">Un corte, una barba o el ritual completo a navaja — con su bebida de cortesía incluida. Elegí la experiencia, completás los datos de quien lo recibe y la gift card le llega por mail al instante.</p>
       <div class="gc-actions">
-        <a class="gc-buy-cta" href="#gc-experiencias">Elegí tu experiencia ↓</a>
+        <a class="gc-buy-cta" href="#gc-experiencias" data-en="Choose your experience ↓">Elegí tu experiencia ↓</a>
         <span class="gc-note">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-          Válida para cualquier barbero de la casa.
+          <span data-en="Valid for any barber in the house.">Válida para cualquier barbero de la casa.</span>
         </span>
       </div>
     </div>
@@ -172,7 +175,7 @@
         <svg class="gc-flourish" viewBox="0 0 320 18" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M148 9 H44"></path><path d="M44 9 q-12 0 -15 -7"></path><path d="M148 9 q7 0 9 -4"></path><path d="M172 9 H276"></path><path d="M276 9 q12 0 15 -7"></path><path d="M172 9 q-7 0 -9 -4"></path></svg>
 
         <img class="gc-card-logo" src="assets/img/logo/logo-ornamental-color-neg.png" alt="Buenos Aires Barbershop" />
-        <span class="gc-ribbon">Gift Card · Experiencia</span>
+        <span class="gc-ribbon" data-en="Gift Card · Experience">Gift Card · Experiencia</span>
 
         <p class="gc-card-exp" id="gcExp">Corte de cabello</p>
         <p class="gc-card-price" id="gcPrice">$30.000</p>
@@ -187,9 +190,9 @@
 <section class="gc-exps" id="gc-experiencias">
   <div class="gc-exps-inner">
     <header class="gc-exps-head">
-      <p class="eyebrow">— Elegí el ritual</p>
-      <h2>¿Qué experiencia querés regalar?</h2>
-      <p class="lead">Tocá una experiencia para armar la gift card. Cada una incluye una bebida de cortesía — café Segafredo, cerveza o gaseosa Cunnington.</p>
+      <p class="eyebrow" data-en="— Choose the ritual">— Elegí el ritual</p>
+      <h2 data-en="Which experience do you want to gift?">¿Qué experiencia querés regalar?</h2>
+      <p class="lead" data-en="Tap an experience to build the gift card. Each one includes a complimentary drink — Segafredo coffee, beer or Cunnington soda.">Tocá una experiencia para armar la gift card. Cada una incluye una bebida de cortesía — café Segafredo, cerveza o gaseosa Cunnington.</p>
     </header>
 
     <div class="exp-grid">
@@ -256,8 +259,8 @@
 
     <div class="gc-sticky">
       <div class="gc-sticky-inner">
-        <span class="gc-sticky-label">Experiencia elegida: <b id="gcSelLabel">Corte de cabello</b></span>
-        <a class="gc-buy-cta" href="#gc-checkout">Comprar esta gift card</a>
+        <span class="gc-sticky-label"><span data-en="Chosen experience:">Experiencia elegida:</span> <b id="gcSelLabel">Corte de cabello</b></span>
+        <a class="gc-buy-cta" href="#gc-checkout" data-en="Buy this gift card">Comprar esta gift card</a>
       </div>
     </div>
   </div>
@@ -289,24 +292,24 @@
 <section class="gc-exps" id="gc-checkout">
   <div class="gc-exps-inner">
     <header class="gc-exps-head">
-      <p class="eyebrow">— Último paso</p>
-      <h2>Completá el regalo</h2>
-      <p class="lead">Vas a regalar: <b id="coExp">Corte de cabello</b> · <span id="coPrice">$30.000</span></p>
+      <p class="eyebrow" data-en="— Last step">— Último paso</p>
+      <h2 data-en="Complete the gift">Completá el regalo</h2>
+      <p class="lead"><span data-en="You are gifting:">Vas a regalar:</span> <b id="coExp">Corte de cabello</b> · <span id="coPrice">$30.000</span></p>
     </header>
     <form id="coForm" class="co-form">
-      <label>Nombre de quien lo recibe <span class="opt">(opcional)</span>
-        <input type="text" id="coName" placeholder="Ej: Martín" />
+      <label><span data-en="Recipient’s name">Nombre de quien lo recibe</span> <span class="opt" data-en="(optional)">(opcional)</span>
+        <input type="text" id="coName" placeholder="Ej: Martín" data-en-placeholder="e.g. Martin" />
       </label>
-      <label>Email de quien lo recibe *
-        <input type="email" id="coEmail" required placeholder="destinatario@email.com" />
+      <label><span data-en="Recipient’s email *">Email de quien lo recibe *</span>
+        <input type="email" id="coEmail" required placeholder="destinatario@email.com" data-en-placeholder="recipient@email.com" />
       </label>
-      <label>Mensaje / dedicatoria <span class="opt">(opcional)</span>
-        <textarea id="coMsg" placeholder="¡Feliz cumple! Disfrutá tu ritual."></textarea>
+      <label><span data-en="Message / dedication">Mensaje / dedicatoria</span> <span class="opt" data-en="(optional)">(opcional)</span>
+        <textarea id="coMsg" placeholder="¡Feliz cumple! Disfrutá tu ritual." data-en-placeholder="Happy birthday! Enjoy your ritual."></textarea>
       </label>
-      <label>Tu email, para el comprobante <span class="opt">(opcional)</span>
-        <input type="email" id="coBuyer" placeholder="tu@email.com" />
+      <label><span data-en="Your email, for the receipt">Tu email, para el comprobante</span> <span class="opt" data-en="(optional)">(opcional)</span>
+        <input type="email" id="coBuyer" placeholder="tu@email.com" data-en-placeholder="you@email.com" />
       </label>
-      <button type="submit" class="co-pay" id="coPay">Pagar con Mercado Pago</button>
+      <button type="submit" class="co-pay" id="coPay" data-en="Pay with Mercado Pago">Pagar con Mercado Pago</button>
       <p class="co-status" id="coStatus"></p>
     </form>
   </div>
@@ -316,11 +319,11 @@
   <div class="container footer-inner">
     <div class="footer-brand">
       <img src="assets/img/logo/logo-principal-color-neg.png" alt="Buenos Aires Barbershop" />
-      <p>El último ritual masculino.</p>
+      <p data-en="The last masculine ritual.">El último ritual masculino.</p>
     </div>
     <div class="footer-meta">
-      <p>© <span id="year"></span> Buenos Aires Barbershop · Córdoba 2561, Olivos.</p>
-      <p class="small"><a href="index.html" style="border-bottom:1px solid var(--line-strong);">Volver al inicio</a></p>
+      <p data-en="© Buenos Aires Barbershop · Córdoba 2561, Olivos.">© <span id="year"></span> Buenos Aires Barbershop · Córdoba 2561, Olivos.</p>
+      <p class="small"><a href="index.html" style="border-bottom:1px solid var(--line-strong);" data-en="Back to home">Volver al inicio</a></p>
     </div>
   </div>
 </footer>
@@ -368,6 +371,7 @@
 </script>
 
 <script src="assets/js/supabase-config.js?v=2"></script>
+<script src="assets/js/i18n.js?v=1" defer></script>
 <script>
   const gcExp = document.getElementById('gcExp');
   const gcPrice = document.getElementById('gcPrice');

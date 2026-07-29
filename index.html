@@ -26,14 +26,15 @@
       <img src="assets/img/logo/logo-horizontal-blanco.png" alt="Buenos Aires Barbershop" />
     </a>
     <nav class="nav-links">
-      <a href="#barberia">La Barbería</a>
-      <a href="#equipo">Equipo</a>
-      <a href="#colecciones">Colecciones</a>
-      <a href="#prensa">Prensa</a>
-      <a href="Gift Card.html" class="nav-gift">Gift Card</a>
-      <a href="#contacto">Contacto</a>
+      <a href="#barberia" data-en="The Shop">La Barbería</a>
+      <a href="#equipo" data-en="Team">Equipo</a>
+      <a href="#colecciones" data-en="Collections">Colecciones</a>
+      <a href="#prensa" data-en="Press">Prensa</a>
+      <a href="Gift Card.html" class="nav-gift" data-en="Gift Card">Gift Card</a>
+      <a href="#contacto" data-en="Contact">Contacto</a>
     </nav>
-    <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="nav-cta" data-booksy>Reservar</a>
+    <button class="nav-lang" data-i18n-btn type="button" title="Language">EN</button>
+    <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="nav-cta" data-booksy data-en="Book">Reservar</a>
     <button class="nav-burger" id="navBurger" aria-label="Menú">
       <span></span><span></span><span></span>
     </button>
@@ -43,13 +44,14 @@
 <!-- Mobile menu -->
 <div class="mobile-menu" id="mobileMenu">
   <nav>
-    <a href="#barberia">La Barbería</a>
-    <a href="#equipo">Equipo</a>
-    <a href="#colecciones">Colecciones</a>
-    <a href="#prensa">Prensa</a>
-    <a href="Gift Card.html">Gift Card · Experiencia</a>
-    <a href="#contacto">Contacto</a>
-    <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="mobile-cta" data-booksy>Reservar turno</a>
+    <a href="#barberia" data-en="The Shop">La Barbería</a>
+    <a href="#equipo" data-en="Team">Equipo</a>
+    <a href="#colecciones" data-en="Collections">Colecciones</a>
+    <a href="#prensa" data-en="Press">Prensa</a>
+    <a href="Gift Card.html" data-en="Gift Card · Experience">Gift Card · Experiencia</a>
+    <a href="#contacto" data-en="Contact">Contacto</a>
+    <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="mobile-cta" data-booksy data-en="Book an appointment">Reservar turno</a>
+    <button class="mobile-lang" data-i18n-btn type="button">EN</button>
   </nav>
 </div>
 
@@ -63,23 +65,23 @@
   <div class="hero-content">
     <img class="hero-brand" src="assets/img/logo/logo-ornamental-color-neg.png" alt="Buenos Aires Barbershop" />
     <p class="hero-eyebrow"><span class="line"></span> EST. BUENOS AIRES <span class="line"></span></p>
-    <h1 class="hero-title" data-cms="hero_titulo" data-cms-default="El último *ritual* masculino.">
+    <h1 class="hero-title" data-cms="hero_titulo" data-cms-default="El último *ritual* masculino." data-en="<span class='word' style='transform:none;opacity:1'>The</span> <span class='word' style='transform:none;opacity:1'>last</span> <span class='word italic' style='transform:none;opacity:1'>masculine</span><br aria-hidden='true' /><span class='word' style='transform:none;opacity:1'>ritual.</span>">
       <span class="word">El</span>
       <span class="word">último</span>
       <span class="word italic">ritual</span>
       <br aria-hidden="true" />
       <span class="word">masculino.</span>
     </h1>
-    <p class="hero-sub" data-cms="hero_sub">Cada corte incluye una bebida de cortesía — café Segafredo, cerveza o gaseosa Cunnington. Cortes, barba y afeitado clásico en el corazón de Buenos Aires.</p>
+    <p class="hero-sub" data-cms="hero_sub" data-en="Every service includes a complimentary drink — Segafredo coffee, beer or Cunnington soda. Classic haircuts, beard and shaving in the heart of Buenos Aires.">Cada corte incluye una bebida de cortesía — café Segafredo, cerveza o gaseosa Cunnington. Cortes, barba y afeitado clásico en el corazón de Buenos Aires.</p>
     <div class="hero-actions">
       <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="btn btn-neon">
         <span class="btn-neon-glow" aria-hidden="true"></span>
-        <span class="btn-neon-label">Reservar un turno</span>
+        <span class="btn-neon-label" data-en="Book an appointment">Reservar un turno</span>
         <svg class="btn-neon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
       </a>
-      <a href="#barberia" class="btn btn-ghost">Conocer la casa</a>
+      <a href="#barberia" class="btn btn-ghost" data-en="Explore the house">Conocer la casa</a>
     </div>
-    <p class="hero-gift-tagline" id="giftTagline" data-cms="hero_gift_tagline">No regalás un corte, regalás una experiencia.</p>
+    <p class="hero-gift-tagline" id="giftTagline" data-cms="hero_gift_tagline" data-en="You’re not gifting a haircut — you’re gifting an experience.">No regalás un corte, regalás una experiencia.</p>
   </div>
 
   <div class="hero-scroll">
@@ -118,9 +120,9 @@
     </div>
 
     <div class="barberia-text">
-      <p class="eyebrow reveal">— La Casa</p>
-      <h2 class="reveal-text">Una barbería <em>hecha a mano</em>, no a máquina.</h2>
-      <p class="lead reveal">Fundada por <strong>Diego</strong>, Buenos Aires Barbershop es el refugio de quienes entienden que un buen corte se construye despacio. Tijeras, navaja, espuma caliente y conversación. Sin atajos.</p>
+      <p class="eyebrow reveal" data-en="— The House">— La Casa</p>
+      <h2 class="reveal-text" data-en="A barbershop <em>made by hand</em>, not by machine.">Una barbería <em>hecha a mano</em>, no a máquina.</h2>
+      <p class="lead reveal" data-en="Founded by <strong>Diego</strong>, Buenos Aires Barbershop is the refuge for those who understand that a good haircut is built slowly. Scissors, straight razor, hot lather and conversation. No shortcuts.">Fundada por <strong>Diego</strong>, Buenos Aires Barbershop es el refugio de quienes entienden que un buen corte se construye despacio. Tijeras, navaja, espuma caliente y conversación. Sin atajos.</p>
     </div>
   </div>
 
@@ -176,10 +178,10 @@
 <!-- STATS / TRUST STRIP -->
 <section class="stats">
   <div class="container stats-grid">
-    <div class="stat reveal"><span class="num" data-target="11">0</span><p>años de oficio</p></div>
-    <div class="stat reveal"><span class="num" data-target="7">0</span><p>barberos en la casa</p></div>
-    <div class="stat reveal"><span class="num" data-target="40000">0</span><p>cortes realizados</p></div>
-    <div class="stat reveal"><span class="num" data-target="5" data-decimal=".0">0</span><p>estrellas en Google</p></div>
+    <div class="stat reveal"><span class="num" data-target="11">0</span><p data-en="years of craft">años de oficio</p></div>
+    <div class="stat reveal"><span class="num" data-target="7">0</span><p data-en="barbers in the house">barberos en la casa</p></div>
+    <div class="stat reveal"><span class="num" data-target="40000">0</span><p data-en="haircuts done">cortes realizados</p></div>
+    <div class="stat reveal"><span class="num" data-target="5" data-decimal=".0">0</span><p data-en="stars on Google">estrellas en Google</p></div>
   </div>
 </section>
 
@@ -187,39 +189,39 @@
 <section class="section equipo" id="equipo">
   <div class="container">
     <header class="section-head">
-      <p class="eyebrow reveal">— El Equipo</p>
-      <h2 class="reveal-text">Las manos detrás del oficio.</h2>
-      <p class="lead reveal">Siete barberos, una sola escuela. Cada uno con su firma, todos con la misma exigencia.</p>
+      <p class="eyebrow reveal" data-en="— The Team">— El Equipo</p>
+      <h2 class="reveal-text" data-en="The hands behind the craft.">Las manos detrás del oficio.</h2>
+      <p class="lead reveal" data-en="Seven barbers, one school. Each with their signature, all with the same standard.">Siete barberos, una sola escuela. Cada uno con su firma, todos con la misma exigencia.</p>
     </header>
 
     <div class="team-grid">
       <article class="barber reveal-up">
         <div class="barber-img"><img src="assets/img/barberos/diego3581.jpg" alt="Luis" /></div>
-        <h3>Luis</h3><p>Barbero</p>
+        <h3>Luis</h3><p data-en="Barber">Barbero</p>
       </article>
       <article class="barber reveal-up">
         <div class="barber-img"><img src="assets/img/barberos/nahuel4008.jpg" alt="Nahuel" /></div>
-        <h3>Nahuel</h3><p>Barbero</p>
+        <h3>Nahuel</h3><p data-en="Barber">Barbero</p>
       </article>
       <article class="barber reveal-up">
         <div class="barber-img"><img src="assets/img/barberos/ivan1720.jpg" alt="Iván" /></div>
-        <h3>Iván</h3><p>Barbero</p>
+        <h3>Iván</h3><p data-en="Barber">Barbero</p>
       </article>
       <article class="barber reveal-up">
         <div class="barber-img"><img src="assets/img/barberos/felix5786.jpg" alt="Lucas" /></div>
-        <h3>Lucas</h3><p>Barbero</p>
+        <h3>Lucas</h3><p data-en="Barber">Barbero</p>
       </article>
       <article class="barber reveal-up">
         <div class="barber-img"><img src="assets/img/barberos/maxi5536.jpg" alt="Brian" /></div>
-        <h3>Brian</h3><p>Barbero</p>
+        <h3>Brian</h3><p data-en="Barber">Barbero</p>
       </article>
       <article class="barber reveal-up">
         <div class="barber-img"><img src="assets/img/barberos/isaias_3816.jpeg" alt="Isaías" /></div>
-        <h3>Isaías</h3><p>Barbero</p>
+        <h3>Isaías</h3><p data-en="Barber">Barbero</p>
       </article>
       <article class="barber reveal-up">
         <div class="barber-img"><img src="assets/img/barberos/diego5365.jpeg" alt="Diego" /></div>
-        <h3>Diego</h3><p>Fundador</p>
+        <h3>Diego</h3><p data-en="Founder">Fundador</p>
       </article>
     </div>
   </div>
@@ -229,9 +231,9 @@
 <section class="section colecciones" id="colecciones">
   <div class="container">
     <header class="section-head">
-      <p class="eyebrow reveal">— Colecciones</p>
-      <h2 class="reveal-text">Cuatro estaciones, un mismo estándar.</h2>
-      <p class="lead reveal">Nuestro trabajo, capturado a lo largo del año.</p>
+      <p class="eyebrow reveal" data-en="— Collections">— Colecciones</p>
+      <h2 class="reveal-text" data-en="Four seasons, one standard.">Cuatro estaciones, un mismo estándar.</h2>
+      <p class="lead reveal" data-en="Our work, captured throughout the year.">Nuestro trabajo, capturado a lo largo del año.</p>
     </header>
   </div>
 
@@ -261,9 +263,9 @@
   <div class="cf-pin" id="cfPin">
     <div class="cf-inner">
       <div class="cf-intro">
-        <p class="eyebrow">— 05 · Clientes</p>
-        <h2 class="cf-title">El feed<br/>de la casa.</h2>
-        <p class="lead">Cada publicación, un corte real. Seguinos en <a href="https://www.instagram.com/buenosairesbarbershop/" target="_blank" rel="noopener">@buenosairesbarbershop</a> y mirá el oficio de cerca.</p>
+        <p class="eyebrow" data-en="— 05 · Clients">— 05 · Clientes</p>
+        <h2 class="cf-title" data-en="The house<br/>feed.">El feed<br/>de la casa.</h2>
+        <p class="lead" data-en="Every post, a real haircut. Follow us on <a href='https://www.instagram.com/buenosairesbarbershop/' target='_blank' rel='noopener'>@buenosairesbarbershop</a> and see the craft up close.">Cada publicación, un corte real. Seguinos en <a href="https://www.instagram.com/buenosairesbarbershop/" target="_blank" rel="noopener">@buenosairesbarbershop</a> y mirá el oficio de cerca.</p>
         <div class="cf-progress" id="cfProgress">
           <span class="cf-dot is-active"></span>
           <span class="cf-dot"></span>
@@ -307,13 +309,13 @@
     <div class="pullquote-overlay"></div>
   </div>
   <div class="container">
-    <p class="quote reveal-text">
+    <p class="quote reveal-text" data-en="<span class='q'>&quot;</span> A good haircut isn’t noticed.<br/><em>It’s felt.</em> <span class='q'>&quot;</span>">
       <span class="q">"</span>
       Un buen corte no se nota.<br/>
       <em>Se siente.</em>
       <span class="q">"</span>
     </p>
-    <p class="quote-attr reveal">— Diego, fundador</p>
+    <p class="quote-attr reveal" data-en="— Diego, founder">— Diego, fundador</p>
   </div>
 </section>
 
@@ -321,8 +323,8 @@
 <section class="section prensa" id="prensa">
   <div class="container">
     <header class="section-head">
-      <p class="eyebrow reveal">— Prensa</p>
-      <h2 class="reveal-text">Hablan de nosotros.</h2>
+      <p class="eyebrow reveal" data-en="— Press">— Prensa</p>
+      <h2 class="reveal-text" data-en="They talk about us.">Hablan de nosotros.</h2>
     </header>
   </div>
 
@@ -347,8 +349,8 @@
 <section class="section reviews" id="reviews">
   <div class="container">
     <header class="section-head">
-      <p class="eyebrow reveal">— Reseñas</p>
-      <h2 class="reveal-text">Lo que dicen quienes ya pasaron por la silla.</h2>
+      <p class="eyebrow reveal" data-en="— Reviews">— Reseñas</p>
+      <h2 class="reveal-text" data-en="What those who’ve sat in the chair say.">Lo que dicen quienes ya pasaron por la silla.</h2>
     </header>
 
     <div class="reviews-grid">
@@ -403,7 +405,7 @@
 <!-- AMIGOS DE LA CASA -->
 <section class="friends">
   <div class="container">
-    <p class="eyebrow center reveal">— Amigos de la casa</p>
+    <p class="eyebrow center reveal" data-en="— Friends of the house">— Amigos de la casa</p>
     <div class="friends-grid">
       <img class="reveal" src="assets/img/logo/G_cunnington.png" alt="Cunnington"/>
       <img class="reveal" src="assets/img/logo/G_artero.png" alt="Artero"/>
@@ -417,21 +419,21 @@
 <section class="section contacto" id="contacto">
   <div class="container grid-2 contacto-grid">
     <div class="contacto-info">
-      <p class="eyebrow reveal">— Reservá tu turno</p>
-      <h2 class="reveal-text">Pasá por la casa.</h2>
-      <p class="lead reveal">El primer corte siempre es la mejor presentación. Te esperamos en Buenos Aires.</p>
+      <p class="eyebrow reveal" data-en="— Book your appointment">— Reservá tu turno</p>
+      <h2 class="reveal-text" data-en="Come by the house.">Pasá por la casa.</h2>
+      <p class="lead reveal" data-en="The first haircut is always the best introduction. We’re waiting for you in Buenos Aires.">El primer corte siempre es la mejor presentación. Te esperamos en Buenos Aires.</p>
 
       <ul class="contacto-list reveal">
-        <li><span>Dirección</span><p>Córdoba 2561, Olivos — Buenos Aires (B1636)</p></li>
-        <li><span>Horarios</span><p>Mar a Vie · 11:00 — 20:30<br/>Sáb · 10:00 — 20:30<br/>Lun y Dom · Cerrado</p></li>
-        <li><span>Teléfono</span><p><a href="tel:+541147947679">+54 11 4794-7679</a></p></li>
-        <li><span>Reservas</span><p><a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" data-booksy>Reservar online (Booksy)</a> · <a href="mailto:info@buenosairesbarbershop.com">info@buenosairesbarbershop.com</a></p></li>
+        <li><span data-en="Address">Dirección</span><p>Córdoba 2561, Olivos — Buenos Aires (B1636)</p></li>
+        <li><span data-en="Hours">Horarios</span><p data-en="Tue to Fri · 11:00 — 20:30<br/>Sat · 10:00 — 20:30<br/>Mon &amp; Sun · Closed">Mar a Vie · 11:00 — 20:30<br/>Sáb · 10:00 — 20:30<br/>Lun y Dom · Cerrado</p></li>
+        <li><span data-en="Phone">Teléfono</span><p><a href="tel:+541147947679">+54 11 4794-7679</a></p></li>
+        <li><span data-en="Bookings">Reservas</span><p><a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" data-booksy data-en="Book online (Booksy)">Reservar online (Booksy)</a> · <a href="mailto:info@buenosairesbarbershop.com">info@buenosairesbarbershop.com</a></p></li>
         <li><span>Instagram</span><p><a href="https://instagram.com/buenosairesbarbershop" target="_blank" rel="noopener">@buenosairesbarbershop</a></p></li>
       </ul>
 
       <a href="https://buenosairesbarbershop.booksy.com/" target="_blank" rel="noopener" class="btn btn-neon reveal" id="reservaBooksy">
         <span class="btn-neon-glow" aria-hidden="true"></span>
-        <span class="btn-neon-label">Reservar en Booksy</span>
+        <span class="btn-neon-label" data-en="Book on Booksy">Reservar en Booksy</span>
         <svg class="btn-neon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
       </a>
     </div>
@@ -447,12 +449,12 @@
   <div class="container footer-inner">
     <div class="footer-brand">
       <img src="assets/img/logo/logo-principal-color-neg.png" alt="Buenos Aires Barbershop"/>
-      <p>El último ritual masculino.</p>
+      <p data-en="The last masculine ritual.">El último ritual masculino.</p>
     </div>
 
     <div class="footer-meta">
-      <p>© <span id="year"></span> Buenos Aires Barbershop. Todos los derechos reservados.</p>
-      <p class="small">Diseñado con oficio en Buenos Aires.</p>
+      <p data-en="© <span id='year2'></span> Buenos Aires Barbershop. All rights reserved.">© <span id="year"></span> Buenos Aires Barbershop. Todos los derechos reservados.</p>
+      <p class="small" data-en="Crafted with pride in Buenos Aires.">Diseñado con oficio en Buenos Aires.</p>
     </div>
   </div>
 </footer>
@@ -484,7 +486,7 @@
   <span class="gift-fab-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg></span>
   <span class="gift-fab-text">
     <span class="gift-fab-kicker">Gift Card</span>
-    <span class="gift-fab-title">Regalá una Experiencia</span>
+    <span class="gift-fab-title" data-en="Gift an Experience">Regalá una Experiencia</span>
   </span>
 </a>
 
@@ -502,6 +504,9 @@
 <!-- CMS: lee de Supabase y reemplaza textos/precios/imágenes si el dueño los cambió -->
 <script src="assets/js/supabase-config.js?v=2"></script>
 <script src="assets/js/cms.js?v=5" defer></script>
+
+<!-- i18n: toggle ES/EN (corre después del CMS) -->
+<script src="assets/js/i18n.js?v=1" defer></script>
 
 <!-- Booksy widget -->
 <script type="text/javascript" src="https://booksy.com/widget/code.js?id=799&country=ar&lang=es"></script>
