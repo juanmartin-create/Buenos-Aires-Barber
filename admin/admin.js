@@ -705,18 +705,27 @@
     }
     var html = '<table><thead><tr>' +
       '<th>Código</th><th>Servicio</th><th>Monto</th><th>Destinatario</th>' +
-      '<th>Estado</th><th>Fecha</th><th>Vence</th><th></th></tr></thead><tbody>';
+      '<th>Estado</th><th>Origen</th><th>Fecha</th><th>Vence</th><th></th></tr></thead><tbody>';
     rows.forEach(function (g) {
       if (isVencida(g)) marcarVencida(g);
+      var origen = g.mp_payment_id
+        ? '<span class="badge active" style="font-size:11px">💳 Pago MP</span>'
+        : '<span class="badge" style="font-size:11px;background:var(--ink-dim,#888);color:#fff">🎁 Panel</span>';
+      var acciones = '';
+      if (g.status === 'active') {
+        acciones += '<button class="mini-btn" data-redeem="' + esc(g.id) + '">Marcar canjeada</button> ';
+      }
+      acciones += '<button class="mini-btn" style="background:#c0392b;color:#fff" data-delete="' + esc(g.id) + '" data-code="' + esc(g.code) + '">Eliminar</button>';
       html += '<tr>' +
         '<td><span class="code">' + esc(g.code) + '</span></td>' +
         '<td>' + esc(g.servicio_nombre) + '</td>' +
         '<td>' + fmtPrecio(g.monto) + '</td>' +
         '<td>' + esc(g.recipient_name || '—') + (g.recipient_email ? '<br><small style="color:var(--ink-dim)">' + esc(g.recipient_email) + '</small>' : '') + '</td>' +
         '<td>' + statusBadge(g.status) + '</td>' +
+        '<td>' + origen + '</td>' +
         '<td>' + fmtFecha(g.created_at) + '</td>' +
         '<td>' + fmtFecha(g.expires_at) + '</td>' +
-        '<td>' + (g.status === 'active' ? '<button class="mini-btn" data-redeem="' + esc(g.id) + '">Marcar canjeada</button>' : '') + '</td>' +
+        '<td style="white-space:nowrap">' + acciones + '</td>' +
         '</tr>';
     });
     html += '</tbody></table>';
@@ -725,6 +734,12 @@
       b.addEventListener('click', function () {
         if (!confirm('¿Marcar esta gift card como canjeada? No se puede deshacer fácilmente.')) return;
         redeem(b.dataset.redeem, function () { loadGiftCards(); });
+      });
+    });
+    wrap.querySelectorAll('[data-delete]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (!confirm('¿Eliminar la gift card ' + b.dataset.code + '? Esta acción no se puede deshacer.')) return;
+        deleteGiftCard(b.dataset.delete);
       });
     });
   }
@@ -751,9 +766,52 @@
       });
   }
 
+  function deleteGiftCard(id) {
+    sb.from('gift_cards').delete().eq('id', id).then(function (res) {
+      if (res.error) { alert('Error al eliminar: ' + res.error.message); return; }
+      loadGiftCards();
+    });
+  }
+
+  function exportGiftCards() {
+    var q = ($('#gcSearch').value || '').toLowerCase();
+    var filter = $('#gcFilter').value;
+    var rows = gcAll.filter(function (g) {
+      if (filter && g.status !== filter) return false;
+      if (!q) return true;
+      return [g.code, g.recipient_name, g.recipient_email, g.servicio_nombre]
+        .some(function (v) { return (v || '').toLowerCase().indexOf(q) >= 0; });
+    });
+    var statusMap = { active: 'Activa', redeemed: 'Canjeada', pending: 'Pendiente de pago', expired: 'Vencida' };
+    var cols = ['Código', 'Servicio', 'Monto', 'Destinatario', 'Email destinatario', 'Estado', 'Origen', 'Fecha creación', 'Vencimiento', 'ID pago MP'];
+    var csv = cols.join(';') + '\n';
+    rows.forEach(function (g) {
+      csv += [
+        g.code || '',
+        g.servicio_nombre || '',
+        g.monto || '',
+        g.recipient_name || '',
+        g.recipient_email || '',
+        statusMap[g.status] || g.status || '',
+        g.mp_payment_id ? 'Pago MP' : 'Panel (cortesía)',
+        g.created_at ? g.created_at.slice(0, 10) : '',
+        g.expires_at ? g.expires_at.slice(0, 10) : '',
+        g.mp_payment_id || ''
+      ].map(function (v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(';') + '\n';
+    });
+    var bom = '﻿';
+    var blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'giftcards-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+  }
+
   $('#gcSearch').addEventListener('input', renderGiftCards);
   $('#gcFilter').addEventListener('change', renderGiftCards);
   $('#gcReload').addEventListener('click', loadGiftCards);
+  $('#gcExport').addEventListener('click', exportGiftCards);
 
   // ---------- VALIDAR CÓDIGO ----------
   $('#validarForm').addEventListener('submit', function (e) {
