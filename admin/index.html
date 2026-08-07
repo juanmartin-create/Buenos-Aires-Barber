@@ -113,16 +113,21 @@
       <h2>Gift Cards</h2>
 
       <details class="create-gc">
-        <summary>＋ Crear gift card de cortesía (gratis)</summary>
+        <summary>＋ Crear gift card manual</summary>
         <div class="card">
-          <p class="hint">Emití una gift card sin pago (regalo, promo o cortesía). Se genera un código activo al instante.</p>
+          <p class="hint">Emití una gift card sin pasar por Mercado Pago. Se genera un código activo al instante.</p>
           <div class="field">
             <label>Servicio</label>
             <select id="newGcServicio"></select>
           </div>
           <div class="row">
             <div class="field"><label>Valor ($)</label><input id="newGcMonto" type="number" /></div>
-            <div class="field"><label>Nombre del destinatario</label><input id="newGcName" type="text" placeholder="Opcional" /></div>
+            <div class="field"><label>Forma de pago</label>
+              <select id="newGcOrigen">
+                <option value="efectivo">💵 Efectivo / en el local</option>
+                <option value="cortesia">🎁 Cortesía (la regala la casa)</option>
+              </select>
+            </div>
             <div class="field"><label>Vigencia</label>
               <select id="newGcVigencia">
                 <option value="7">1 semana</option>
@@ -131,6 +136,7 @@
               </select>
             </div>
           </div>
+          <div class="field"><label>Nombre del destinatario</label><input id="newGcName" type="text" placeholder="Opcional" /></div>
           <div class="field"><label>Email del destinatario</label><input id="newGcEmail" type="email" placeholder="Opcional" /></div>
           <div class="field"><label>Mensaje / dedicatoria</label><textarea id="newGcMsg" placeholder="Opcional"></textarea></div>
           <div class="save-row">

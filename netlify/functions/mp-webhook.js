@@ -103,6 +103,7 @@ exports.handler = async function (event) {
         servicio_nombre: servicioNombre,
         monto: Number(monto) || 0,
         status: 'active',
+        origen: 'mp',
         recipient_name: m.recipient_name || null,
         recipient_email: recipientEmail,
         mensaje: m.mensaje || null,

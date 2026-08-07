@@ -614,14 +614,16 @@
     var dias = Number(($('#newGcVigencia') || {}).value) || 90;
     var venc = new Date();
     venc.setDate(venc.getDate() + dias);
+    var origen = ($('#newGcOrigen') || {}).value || 'cortesia';
     var payload = {
-      order_id: null,                       // cortesía: sin compra
+      order_id: null,                       // sin compra online (MP)
       servicio_id: s.id,
       code: code,
       expires_at: venc.toISOString(),
       servicio_nombre: s.nombre,
       monto: Number($('#newGcMonto').value) || 0,
       status: 'active',
+      origen: origen,                       // 'efectivo' | 'cortesia'
       recipient_name: $('#newGcName').value || null,
       recipient_email: $('#newGcEmail').value || null,
       mensaje: $('#newGcMsg').value || null
@@ -708,9 +710,16 @@
       '<th>Estado</th><th>Origen</th><th>Fecha</th><th>Vence</th><th></th></tr></thead><tbody>';
     rows.forEach(function (g) {
       if (isVencida(g)) marcarVencida(g);
-      var origen = g.mp_payment_id
-        ? '<span class="badge active" style="font-size:11px">💳 Pago MP</span>'
-        : '<span class="badge" style="font-size:11px;background:var(--ink-dim,#888);color:#fff">🎁 Panel</span>';
+      var origen;
+      if (g.mp_payment_id) {
+        origen = '<span class="badge active" style="font-size:11px">💳 Mercado Pago</span>';
+      } else if (g.origen === 'efectivo') {
+        origen = '<span class="badge" style="font-size:11px;background:#2e7d32;color:#fff">💵 Efectivo/local</span>';
+      } else if (g.origen === 'cortesia') {
+        origen = '<span class="badge" style="font-size:11px;background:#8e44ad;color:#fff">🎁 Cortesía</span>';
+      } else {
+        origen = '<span class="badge" style="font-size:11px;background:var(--ink-dim,#888);color:#fff">Panel</span>';
+      }
       var acciones = '';
       if (g.status === 'active') {
         acciones += '<button class="mini-btn" data-redeem="' + esc(g.id) + '">Marcar canjeada</button> ';
@@ -793,7 +802,7 @@
         g.recipient_name || '',
         g.recipient_email || '',
         statusMap[g.status] || g.status || '',
-        g.mp_payment_id ? 'Pago MP' : 'Panel (cortesía)',
+        g.mp_payment_id ? 'Mercado Pago' : (g.origen === 'efectivo' ? 'Efectivo/local' : (g.origen === 'cortesia' ? 'Cortesía' : 'Panel')),
         g.created_at ? g.created_at.slice(0, 10) : '',
         g.expires_at ? g.expires_at.slice(0, 10) : '',
         g.mp_payment_id || ''
