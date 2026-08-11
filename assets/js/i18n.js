@@ -38,7 +38,16 @@
     });
 
     document.querySelectorAll('[data-i18n-btn]').forEach(function (b) {
-      b.textContent = (lang === 'en') ? 'ES' : 'EN';
+      var label = (lang === 'en') ? 'Language' : 'Idioma';
+      var code = (lang === 'en') ? 'ES' : 'EN';
+      b.innerHTML =
+        '<svg class="lang-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" ' +
+        'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+        '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/>' +
+        '<path d="M12 3c2.5 3 4 6 4 9s-1.5 6-4 9"/>' +
+        '<path d="M12 3c-2.5 3-4 6-4 9s1.5 6 4 9"/></svg>' +
+        '<span class="lang-label">' + label + ':</span>' +
+        '<span class="lang-code">' + code + '</span>';
       b.setAttribute('aria-label', lang === 'en' ? 'Cambiar a español' : 'Switch to English');
     });
 

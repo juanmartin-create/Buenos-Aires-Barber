@@ -160,6 +160,10 @@
     m.querySelector('.bm-close').addEventListener('click', close);
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
     m.querySelector('.bm-cta').addEventListener('click', function (e) {
+      // Si el barbero tiene su propio link de Booksy, dejamos que el href
+      // abra ese link en nueva pestaña (así reservan sólo con ese barbero).
+      // Si no, caemos al widget general del shop.
+      if (this.dataset.perBarbero === '1') return;
       var w = document.querySelector('.booksy-widget-button');
       if (w) { e.preventDefault(); close(); w.click(); }
     });
@@ -176,6 +180,16 @@
     q('.bm-esp').style.display = b.especialidad ? '' : 'none';
     q('.bm-bio').textContent = b.bio || '';
     q('.bm-bio').style.display = b.bio ? '' : 'none';
+    var cta = q('.bm-cta');
+    if (b.booksy_url) {
+      cta.href = b.booksy_url;
+      cta.dataset.perBarbero = '1';
+      cta.textContent = 'Reservar con ' + (b.nombre || 'este barbero');
+    } else {
+      cta.href = 'https://buenosairesbarbershop.booksy.com/';
+      cta.dataset.perBarbero = '0';
+      cta.textContent = 'Reservar turno';
+    }
     barberModalEl.classList.add('open');
     document.body.style.overflow = 'hidden';
   }

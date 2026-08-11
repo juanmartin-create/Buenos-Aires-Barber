@@ -339,6 +339,11 @@
     fUrl.appendChild(url);
     url.addEventListener('input', function () { prev.src = url.value; });
 
+    var fBooksy = el('div', { class: 'field' });
+    fBooksy.appendChild(el('label', null, 'Link de Booksy del barbero (opcional — botón "Reservar" del pop-up)'));
+    var booksy = el('input', { type: 'text', value: b.booksy_url || '', placeholder: 'https://buenosairesbarbershop.booksy.com/...' });
+    fBooksy.appendChild(booksy);
+
     var fFile = el('div', { class: 'field' });
     fFile.appendChild(el('label', null, '…o subí una foto nueva'));
     var file = el('input', { type: 'file', accept: 'image/*' });
@@ -353,7 +358,7 @@
         });
     });
 
-    grow.appendChild(row); grow.appendChild(fEsp.wrap); grow.appendChild(fBio); grow.appendChild(fUrl); grow.appendChild(fFile);
+    grow.appendChild(row); grow.appendChild(fEsp.wrap); grow.appendChild(fBio); grow.appendChild(fBooksy); grow.appendChild(fUrl); grow.appendChild(fFile);
     box.appendChild(prev); box.appendChild(grow);
     card.appendChild(box);
 
@@ -379,6 +384,7 @@
         rol: fRol.input.value.trim() || 'Barbero',
         especialidad: fEsp.input.value.trim() || null,
         bio: bio.value.trim() || null,
+        booksy_url: booksy.value.trim() || null,
         foto_url: url.value.trim() || null,
         orden: Number(fOrden.input.value) || 0,
         activo: chk.checked,
@@ -421,6 +427,7 @@
         rol: ($('#newBarberoRol').value || '').trim() || 'Barbero',
         especialidad: (($('#newBarberoEsp') || {}).value || '').trim() || null,
         bio: (($('#newBarberoBio') || {}).value || '').trim() || null,
+        booksy_url: (($('#newBarberoBooksy') || {}).value || '').trim() || null,
         foto_url: fotoUrl,
         orden: maxOrden + 1,
         activo: true
