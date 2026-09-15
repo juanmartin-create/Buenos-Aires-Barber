@@ -15,6 +15,15 @@
 
   var headers = { apikey: cfg.key, Authorization: 'Bearer ' + cfg.key };
 
+  // Egress guard: cuando el bucket "media" de Supabase Storage sirve las
+  // fotos, cada visita del sitio dispara ~14 imágenes → superó 5 GB/mes
+  // del plan Free en agosto/26. El HTML trae las mismas fotos en
+  // assets/img/... como default, así que ignoramos cualquier src que
+  // apunte a Supabase Storage y dejamos las locales.
+  function isSupaStorage(u) {
+    return typeof u === 'string' && u.indexOf('/storage/v1/object/') !== -1;
+  }
+
   function rest(path) {
     return fetch(cfg.url + '/rest/v1/' + path, { headers: headers })
       .then(function (r) { return r.ok ? r.json() : []; })
@@ -34,6 +43,7 @@
       var nodes = document.querySelectorAll('[data-cms="' + row.key + '"]');
       Array.prototype.forEach.call(nodes, function (el) {
         if (row.tipo === 'imagen') {
+          if (isSupaStorage(row.value)) return; // egress guard
           if (el.tagName === 'IMG') el.src = row.value;
           else el.style.backgroundImage = "url('" + row.value + "')";
         } else if (row.tipo === 'video') {
@@ -121,6 +131,11 @@
     if (!Array.isArray(rows) || rows.length === 0) return;
     var grid = document.querySelector('.team-grid');
     if (!grid) return;
+    // Egress guard: si las fotos vienen del bucket Supabase, no re-renderizamos
+    // la grilla y dejamos los 7 defaults del HTML. Los pop-ups pierden bio/
+    // especialidad hasta que se migren las fotos al repo, pero preservamos el
+    // sitio arriba sin comerse el quota de egress.
+    if (rows.some(function (b) { return isSupaStorage(b.foto_url); })) return;
     grid.innerHTML = rows.map(function (b) {
       return '<article class="barber barber-click" role="button" tabindex="0" aria-label="Ver más de ' + escHtml(b.nombre) + '">' +
         '<div class="barber-img"><img src="' + escHtml(b.foto_url || '') + '" alt="' + escHtml(b.nombre) + '" /></div>' +
@@ -201,6 +216,8 @@
     if (!Array.isArray(rows) || rows.length === 0) return;
     var track = document.querySelector('.prensa-track');
     if (!track) return;
+    // Egress guard: idem barberos — dejamos las 5 tarjetas default del HTML.
+    if (rows.some(function (p) { return isSupaStorage(p.imagen_url); })) return;
     var card = function (p, dup) {
       return '<a class="prensa-card" href="' + escHtml(p.link || '#') + '"' +
         (p.link ? ' target="_blank" rel="noopener"' : '') +

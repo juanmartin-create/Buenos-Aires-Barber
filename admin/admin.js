@@ -125,7 +125,10 @@
   function uploadImage(file) {
     var ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
     var path = 'landing/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext;
-    return sb.storage.from('media').upload(path, file, { cacheControl: '3600', upsert: false })
+    // cacheControl alto (1 año): las URLs incluyen timestamp+rand, así que
+    // nunca colisionan. Baja los cache misses del CDN de Supabase y reduce
+    // el "cached egress" que ya reventó el quota Free en agosto/26.
+    return sb.storage.from('media').upload(path, file, { cacheControl: '31536000', upsert: false })
       .then(function (res) {
         if (res.error) throw res.error;
         return sb.storage.from('media').getPublicUrl(path).data.publicUrl;
