@@ -122,7 +122,36 @@
   });
 
   // ---------- STORAGE (subir imágenes) ----------
-  function uploadImage(file) {
+  // Achica las fotos antes de subirlas (máx 1600px, WebP): una foto de celular
+  // de 15-20 MB servida desde Supabase reventó el egress Free en agosto/26.
+  // Videos, GIF y SVG se suben tal cual.
+  function compressImage(file) {
+    if (!/^image\/(jpeg|png|webp|heic|heif)$/i.test(file.type)) return Promise.resolve(file);
+    return new Promise(function (resolve) {
+      var img = new Image();
+      var src = URL.createObjectURL(file);
+      img.onload = function () {
+        URL.revokeObjectURL(src);
+        var max = 1600, w = img.naturalWidth, h = img.naturalHeight;
+        var k = Math.min(1, max / Math.max(w, h));
+        var c = document.createElement('canvas');
+        c.width = Math.round(w * k); c.height = Math.round(h * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob(function (blob) {
+          if (!blob || blob.size >= file.size) return resolve(file);
+          resolve(new File([blob], file.name.replace(/\.[^.]+$/, '') + '.webp', { type: 'image/webp' }));
+        }, 'image/webp', 0.82);
+      };
+      img.onerror = function () { URL.revokeObjectURL(src); resolve(file); };
+      img.src = src;
+    });
+  }
+
+  function uploadImage(original) {
+    return compressImage(original).then(uploadFile);
+  }
+
+  function uploadFile(file) {
     var ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
     var path = 'landing/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext;
     // cacheControl alto (1 año): las URLs incluyen timestamp+rand, así que
