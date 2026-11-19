@@ -74,14 +74,19 @@ exports.handler = async function (event) {
       'Content-Type': 'application/json', Prefer: 'return=representation'
     };
 
-    // 2) Idempotencia: si ya existe una gift card con este mp_payment_id, no repetir
-    var check = await fetch(SUPA_URL + '/rest/v1/gift_cards?mp_payment_id=eq.' +
-      encodeURIComponent(String(paymentId)) + '&select=id',
-      { headers: { apikey: SUPA_SECRET, Authorization: 'Bearer ' + SUPA_SECRET } });
-    if (check.ok) {
+    // 2) Idempotencia: si ya existe una gift card con este mp_payment_id, no repetir.
+    // MP manda 2 avisos casi simultáneos por pago (Webhook + IPN): este chequeo no
+    // alcanza solo, el índice único en mp_payment_id (supabase-mp-unico.sql) frena
+    // el segundo insert con 409.
+    async function yaProcesado() {
+      var check = await fetch(SUPA_URL + '/rest/v1/gift_cards?mp_payment_id=eq.' +
+        encodeURIComponent(String(paymentId)) + '&select=id',
+        { headers: { apikey: SUPA_SECRET, Authorization: 'Bearer ' + SUPA_SECRET } });
+      if (!check.ok) return false;
       var existing = await check.json();
-      if (existing && existing.length) return ok(); // ya procesado
+      return !!(existing && existing.length);
     }
+    if (await yaProcesado()) return ok();
 
     // 3) Extraer datos del metadata (MP puede convertir a snake_case)
     var m = pay.metadata || {};
@@ -120,6 +125,8 @@ exports.handler = async function (event) {
         break;
       }
       if (ins.status !== 409) return ok(); // error distinto a duplicado: cortar
+      // 409: o el otro aviso de MP ya creó la gift card (cortar, sin mails) o chocó el código (reintentar)
+      if (await yaProcesado()) return ok();
     }
     if (!gift) return ok();
 
