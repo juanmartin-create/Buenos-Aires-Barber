@@ -665,7 +665,8 @@
       origen: origen,                       // 'efectivo' | 'cortesia'
       recipient_name: $('#newGcName').value || null,
       recipient_email: $('#newGcEmail').value || null,
-      mensaje: $('#newGcMsg').value || null
+      mensaje: $('#newGcMsg').value || null,
+      buyer_phone: $('#newGcPhone').value.trim() || null
     };
     sb.from('gift_cards').insert(payload).select().then(function (res) {
       if (res.error) {
@@ -690,7 +691,7 @@
             : '✓ Creada (' + payload.code + ') · ⚠ mail no enviado: ' + r.error;
         });
       }
-      $('#newGcName').value = ''; $('#newGcEmail').value = ''; $('#newGcMsg').value = '';
+      $('#newGcName').value = ''; $('#newGcEmail').value = ''; $('#newGcMsg').value = ''; $('#newGcPhone').value = '';
       setTimeout(function () { ok.classList.remove('show'); }, 9000);
     });
   }
@@ -769,7 +770,7 @@
         '<td>' + esc(g.servicio_nombre) + '</td>' +
         '<td>' + fmtPrecio(g.monto) + '</td>' +
         '<td>' + esc(g.recipient_name || '—') + (g.recipient_email ? '<br><small style="color:var(--ink-dim)">' + esc(g.recipient_email) + '</small>' : '') +
-          (g.buyer_phone ? '<br><small style="color:var(--ink-dim)">WhatsApp comprador: ' + esc(g.buyer_phone) + '</small>' : '') + '</td>' +
+          (g.buyer_phone ? '<br><small style="color:var(--ink-dim)">WhatsApp: ' + esc(g.buyer_phone) + '</small>' : '') + '</td>' +
         '<td>' + statusBadge(g.status) + '</td>' +
         '<td>' + origen + '</td>' +
         '<td>' + fmtFecha(g.created_at) + '</td>' +
@@ -834,7 +835,7 @@
         .some(function (v) { return (v || '').toLowerCase().indexOf(q) >= 0; });
     });
     var statusMap = { active: 'Activa', redeemed: 'Canjeada', pending: 'Pendiente de pago', expired: 'Vencida' };
-    var cols = ['Código', 'Servicio', 'Monto', 'Destinatario', 'Email destinatario', 'Estado', 'Origen', 'Fecha creación', 'Vencimiento', 'ID pago MP', 'Email comprador', 'WhatsApp comprador'];
+    var cols = ['Código', 'Servicio', 'Monto', 'Destinatario', 'Email destinatario', 'Estado', 'Origen', 'Fecha creación', 'Vencimiento', 'ID pago MP', 'Email comprador', 'WhatsApp'];
     var csv = cols.join(';') + '\n';
     rows.forEach(function (g) {
       csv += [
