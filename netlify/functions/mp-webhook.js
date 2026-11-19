@@ -113,6 +113,7 @@ exports.handler = async function (event) {
         recipient_email: recipientEmail,
         mensaje: m.mensaje || null,
         buyer_email: m.buyer_email || null,
+        buyer_phone: m.buyer_phone || null,
         mp_payment_id: String(paymentId),
         expires_at: venc.toISOString()
       };
@@ -124,6 +125,8 @@ exports.handler = async function (event) {
         gift = rows && rows[0];
         break;
       }
+      // Si todavía no existe la columna buyer_phone, guardar la gift card igual sin el teléfono
+      if (ins.status === 400 && 'buyer_phone' in payload) { delete payload.buyer_phone; attempt--; continue; }
       if (ins.status !== 409) return ok(); // error distinto a duplicado: cortar
       // 409: o el otro aviso de MP ya creó la gift card (cortar, sin mails) o chocó el código (reintentar)
       if (await yaProcesado()) return ok();

@@ -768,7 +768,8 @@
         '<td><span class="code">' + esc(g.code) + '</span></td>' +
         '<td>' + esc(g.servicio_nombre) + '</td>' +
         '<td>' + fmtPrecio(g.monto) + '</td>' +
-        '<td>' + esc(g.recipient_name || '—') + (g.recipient_email ? '<br><small style="color:var(--ink-dim)">' + esc(g.recipient_email) + '</small>' : '') + '</td>' +
+        '<td>' + esc(g.recipient_name || '—') + (g.recipient_email ? '<br><small style="color:var(--ink-dim)">' + esc(g.recipient_email) + '</small>' : '') +
+          (g.buyer_phone ? '<br><small style="color:var(--ink-dim)">WhatsApp comprador: ' + esc(g.buyer_phone) + '</small>' : '') + '</td>' +
         '<td>' + statusBadge(g.status) + '</td>' +
         '<td>' + origen + '</td>' +
         '<td>' + fmtFecha(g.created_at) + '</td>' +
@@ -815,8 +816,10 @@
   }
 
   function deleteGiftCard(id) {
-    sb.from('gift_cards').delete().eq('id', id).then(function (res) {
+    sb.from('gift_cards').delete().eq('id', id).select('id').then(function (res) {
       if (res.error) { alert('Error al eliminar: ' + res.error.message); return; }
+      // Sin permiso de borrado, Supabase no da error: simplemente no borra nada
+      if (!res.data || !res.data.length) { alert('No se pudo eliminar: tu usuario no tiene permiso para borrar gift cards.'); return; }
       loadGiftCards();
     });
   }
@@ -831,7 +834,7 @@
         .some(function (v) { return (v || '').toLowerCase().indexOf(q) >= 0; });
     });
     var statusMap = { active: 'Activa', redeemed: 'Canjeada', pending: 'Pendiente de pago', expired: 'Vencida' };
-    var cols = ['Código', 'Servicio', 'Monto', 'Destinatario', 'Email destinatario', 'Estado', 'Origen', 'Fecha creación', 'Vencimiento', 'ID pago MP'];
+    var cols = ['Código', 'Servicio', 'Monto', 'Destinatario', 'Email destinatario', 'Estado', 'Origen', 'Fecha creación', 'Vencimiento', 'ID pago MP', 'Email comprador', 'WhatsApp comprador'];
     var csv = cols.join(';') + '\n';
     rows.forEach(function (g) {
       csv += [
@@ -844,7 +847,9 @@
         g.mp_payment_id ? 'Mercado Pago' : (g.origen === 'efectivo' ? 'Efectivo/local' : (g.origen === 'cortesia' ? 'Cortesía' : 'Panel')),
         g.created_at ? g.created_at.slice(0, 10) : '',
         g.expires_at ? g.expires_at.slice(0, 10) : '',
-        g.mp_payment_id || ''
+        g.mp_payment_id || '',
+        g.buyer_email || '',
+        g.buyer_phone || ''
       ].map(function (v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(';') + '\n';
     });
     var bom = '﻿';

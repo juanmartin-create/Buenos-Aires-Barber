@@ -72,7 +72,8 @@ exports.handler = async function (event) {
       recipient_name: body.recipient_name || null,
       recipient_email: body.recipient_email,
       mensaje: body.mensaje || null,
-      buyer_email: body.buyer_email || null
+      buyer_email: body.buyer_email || null,
+      buyer_phone: body.buyer_phone ? String(body.buyer_phone).slice(0, 40) : null
     }
   };
   if (base.indexOf('https://') === 0) pref.auto_return = 'approved';

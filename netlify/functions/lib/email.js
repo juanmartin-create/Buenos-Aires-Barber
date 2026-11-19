@@ -74,7 +74,6 @@ function buildEmail(g) {
     mensaje,
     '<p style="margin:0 0 8px;color:' + C.dim + ';font-size:13px;text-align:center;font-family:Arial,sans-serif">Tu código de gift card</p>',
     codeBox(g.code),
-    '<p style="margin:0 0 4px;color:' + C.dim + ';font-size:14px;text-align:center">Valor: <span style="color:' + C.ink + '">' + fmtPrecio(g.monto) + '</span></p>',
     (g.expires_at ? '<p style="margin:0 0 4px;color:' + C.dim + ';font-size:13px;text-align:center">Válida hasta el <span style="color:' + C.ink + '">' + fmtVence(g.expires_at) + '</span></p>' : ''),
     '<p style="margin:20px 0 0;color:' + C.dim + ';font-size:14px;line-height:1.7;text-align:center">Presentá este código en el local para vivir tu experiencia.<br/>Cada servicio incluye una bebida de cortesía.</p>',
     '</div>'

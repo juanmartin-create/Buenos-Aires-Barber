@@ -310,6 +310,9 @@
       <label><span data-en="Your email, for the receipt">Tu email, para el comprobante</span> <span class="opt" data-en="(optional)">(opcional)</span>
         <input type="email" id="coBuyer" placeholder="tu@email.com" data-en-placeholder="you@email.com" />
       </label>
+      <label><span data-en="Your WhatsApp, to send you perks after the ritual">Tu WhatsApp, para acercarte beneficios después del ritual</span> <span class="opt" data-en="(optional)">(opcional)</span>
+        <input type="tel" id="coPhone" autocomplete="tel" placeholder="Ej: 11 2345-6789" data-en-placeholder="e.g. 11 2345-6789" />
+      </label>
       <button type="submit" class="co-pay" id="coPay" data-en="Pay with Mercado Pago">Pagar con Mercado Pago</button>
       <p class="co-status" id="coStatus"></p>
     </form>
@@ -420,7 +423,8 @@
         recipient_name: document.getElementById('coName').value,
         recipient_email: email,
         mensaje: document.getElementById('coMsg').value,
-        buyer_email: document.getElementById('coBuyer').value
+        buyer_email: document.getElementById('coBuyer').value,
+        buyer_phone: document.getElementById('coPhone').value.trim()
       })
     })
       .then(r => r.json().then(d => ({ ok: r.ok, d })))
