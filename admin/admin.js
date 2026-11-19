@@ -764,6 +764,7 @@
       if (g.status === 'active') {
         acciones += '<button class="mini-btn" data-redeem="' + esc(g.id) + '">Marcar canjeada</button> ';
       }
+      acciones += '<button class="mini-btn" data-resend="' + esc(g.id) + '">Reenviar mail</button> ';
       acciones += '<button class="mini-btn" style="background:#c0392b;color:#fff" data-delete="' + esc(g.id) + '" data-code="' + esc(g.code) + '">Eliminar</button>';
       html += '<tr>' +
         '<td><span class="code">' + esc(g.code) + '</span></td>' +
@@ -784,6 +785,12 @@
       b.addEventListener('click', function () {
         if (!confirm('¿Marcar esta gift card como canjeada? No se puede deshacer fácilmente.')) return;
         redeem(b.dataset.redeem, function () { loadGiftCards(); });
+      });
+    });
+    wrap.querySelectorAll('[data-resend]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var g = gcAll.filter(function (x) { return String(x.id) === b.dataset.resend; })[0];
+        if (g) resendGiftCard(g, b);
       });
     });
     wrap.querySelectorAll('[data-delete]').forEach(function (b) {
@@ -814,6 +821,30 @@
         if (res.error) { alert('Error: ' + res.error.message); return; }
         if (done) done();
       });
+  }
+
+  // Reenvía el mail de la gift card al destinatario. Se puede corregir el email antes de mandar.
+  function resendGiftCard(g, btn) {
+    var email = prompt('Reenviar la gift card ' + g.code + ' a:', g.recipient_email || '');
+    if (email === null) return;
+    email = email.trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { alert('Ese email no es válido.'); return; }
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    var guardar = email === g.recipient_email
+      ? Promise.resolve({})
+      : sb.from('gift_cards').update({ recipient_email: email }).eq('id', g.id);
+    guardar.then(function (res) {
+      if (res && res.error) throw new Error('no se pudo guardar el email: ' + res.error.message);
+      g.recipient_email = email;
+      return sendGiftCardEmail(g);
+    }).then(function (r) {
+      btn.disabled = false; btn.textContent = 'Reenviar mail';
+      alert(r.ok ? '✓ Gift card ' + g.code + ' reenviada a ' + email : 'No se pudo enviar el mail: ' + r.error);
+      loadGiftCards();
+    }).catch(function (e) {
+      btn.disabled = false; btn.textContent = 'Reenviar mail';
+      alert('Error: ' + e.message);
+    });
   }
 
   function deleteGiftCard(id) {
